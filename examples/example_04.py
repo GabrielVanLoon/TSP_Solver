@@ -1,3 +1,4 @@
+!pip install ortools
 from __future__ import print_function
 from ortools.linear_solver import pywraplp
 def create_data_model():
