@@ -1,5 +1,6 @@
 """
-    TSP solved with MTZ formulation
+    TSP solver
+    The Miller, Tucker and Zemlin (MTZ) formulation
 """
 from __future__ import print_function
 from ortools.linear_solver import pywraplp
@@ -10,24 +11,23 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 import helper
 
 def create_data_model():
-    """
-    """
 
     # Create the mip solver with the SCIP backend.
     solver = pywraplp.Solver.CreateSolver('SCIP')
     
-    # cost = create_data_array()
+    # Cost[i, j] : cost to go from i to j
     costs = helper.load_data()
     n_nodes = len(costs)
 
-    # # Inicializate boolean variable x[i, j]     
+    # # Inicializate boolean variable x[i, j]
+    # x[i, j] is one if there a segment from i to j     
     x = {}
     for position_from in range(n_nodes):
         for position_to in range(n_nodes):
             x[position_from, position_to] = solver.IntVar(0, 1, '')
 
     # # Inicializate u real variable from 1, n
-    # Sub-tour elimination
+    # Sub-tour elimination(MTZ)
     u = {}
     for i in range(n_nodes):
         u[i] = solver.NumVar(0, n_nodes, '')
