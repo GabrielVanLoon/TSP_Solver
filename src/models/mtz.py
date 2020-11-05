@@ -18,7 +18,7 @@ def create_data_model():
     # Cost[i, j] : cost to go from i to j
     costs = helper.load_data()
     n_nodes = len(costs)
-
+    
     # # Inicializate boolean variable x[i, j]
     # x[i, j] is one if there a segment from i to j     
     x = {}

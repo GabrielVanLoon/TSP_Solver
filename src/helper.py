@@ -6,8 +6,12 @@ def default_cast_value(value):
 
 
 def load_data(cast_value = default_cast_value):
+    """
+        Read a matrix of cost on the file .txt
+        and load into matrix
+    """
     # open and read file
-    file = open(dir + '5.txt')
+    file = open(dir + '7.txt')
     lines = file.readlines()
     file.close()
 

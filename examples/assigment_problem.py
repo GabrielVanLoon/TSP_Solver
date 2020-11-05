@@ -33,6 +33,7 @@ function = []
 for i in range(n):
     for j in range(n):
         function.append(cost[i][j] * x[i, j])
+print(x[0,0])
 
 solver.Minimize(solver.Sum(function))
 
