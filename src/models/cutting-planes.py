@@ -3,20 +3,12 @@
 """
 from __future__ import print_function
 from ortools.linear_solver import pywraplp
+
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..')) 
+import helper
+
 import numpy as np
-
-def create_data_array(solver):
-
-    # infinity value
-    INF = solver.infinity()
-
-    cost = [
-        [INF, 5, 3, 17, 1],
-        [5, INF, 6, 5, 9],
-        [3, 6, INF, 3, 3],
-        [17, 5, 3, INF, 2],
-        [1, 9, 3, 2, INF]]
-    return cost
 
 def create_data_model():
     """
@@ -25,7 +17,7 @@ def create_data_model():
     # Create the mip solver with the SCIP backend.
     solver = pywraplp.Solver.CreateSolver('SCIP')
 
-    cost = create_data_array()
+    cost = helper.load_data()
     rows = len(cost)
     cols = len(cost[0])
 
@@ -46,3 +38,6 @@ def create_data_model():
 
 def main():
     create_data_model()
+
+if __name__ == '__main__':
+    main()
