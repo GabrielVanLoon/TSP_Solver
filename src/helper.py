@@ -11,7 +11,7 @@ def load_data(cast_value = default_cast_value):
         and load into matrix
     """
     # open and read file
-    file = open(dir + '7.txt')
+    file = open(dir + '6.txt')
     lines = file.readlines()
     file.close()
 

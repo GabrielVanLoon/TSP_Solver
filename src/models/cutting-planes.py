@@ -1,6 +1,8 @@
 """
     TSP Solver
     The Dantzig, Fulkerson and Johnson (DFJ) formulation
+
+    This version apply all constrains
 """
 from __future__ import print_function
 from ortools.linear_solver import pywraplp
@@ -9,8 +11,6 @@ import numpy as np
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..')) 
 import helper
-
- # Create the mip solver with the SCIP backend.
 
 x = {}
 def all_sub_cycles(acc, initial, actual, nivel, length_cycle, next_node, n_nodes, solver):
@@ -25,13 +25,9 @@ def all_sub_cycles(acc, initial, actual, nivel, length_cycle, next_node, n_nodes
 
         x[ij] + x[jk] + x[ki] <= 3
     """
-    # print(len(next_node))
     if(nivel == length_cycle):
-        # print("ini %d act %d " %(initial, actual))
         acc.append(x[actual, initial])
-        # print(solver.Sum(acc))
         solver.Add(solver.Sum(acc) <= length_cycle-1)
-        # print("x%d%d ->" %(actual, initial))
         acc.pop(-1)
         return 
     
@@ -40,11 +36,9 @@ def all_sub_cycles(acc, initial, actual, nivel, length_cycle, next_node, n_nodes
     for j in range(len(next_node)):
         next = next_node.pop(0)
         acc.append(x[actual, next])
-        # print("x%d%d ->" %(actual, next), end = ' ')
         all_sub_cycles(acc, initial, next, nivel + 1, length_cycle, next_node, n_nodes, solver)
         next_node.append(next)
         acc.pop(-1)
-
     return 
 
 def generate_constrains( n_nodes, solver):
@@ -56,7 +50,7 @@ def generate_constrains( n_nodes, solver):
     next_node = list(range(0, n_nodes))
     
     # For all sub-sets() less than the number of cities
-    for i in range(2, int(n_nodes/2)+1):
+    for i in range(2, n_nodes-1):
 
         # For all paths, check sub-cicle of length i
         for j in range(0, n_nodes):
@@ -69,6 +63,8 @@ def create_data_model():
     
     costs = helper.load_data()
     n_nodes = len(costs)
+
+     # Create the mip solver with the SCIP backend.
     solver = pywraplp.Solver.CreateSolver('SCIP')
 
     # # Inicializate boolean variable x[i, j]
@@ -88,7 +84,6 @@ def create_data_model():
         solver.Add(solver.Sum(x[i, j] for i in range(n_nodes)) == 1)
 
     # # Add constrains DFJ to sub-tour elimination
-    print('Number of constraints =', solver.NumConstraints())
     generate_constrains(n_nodes, solver)
     print('Number of constraints =', solver.NumConstraints())
 
