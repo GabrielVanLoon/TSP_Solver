@@ -2,7 +2,6 @@
     Generate all tours and pick the one with least cost
     O(n!)
 """
-import sys, os
 import itertools
 import numpy as np
 sys.path.append(os.path.join(os.path.dirname(__file__), '..')) 
