@@ -19,11 +19,11 @@ def all_sub_cycles(acc, initial, actual, nivel, length_cycle, next_node, n_nodes
         __________________________
         Example length_cycle = 2
 
-        x[ij] + x[ji] <= 2
+        x[ij] + x[ji] < 2
         __________________________
         Example length_cycle = 3
 
-        x[ij] + x[jk] + x[ki] <= 3
+        x[ij] + x[jk] + x[ki] < 3
     """
     if(nivel == length_cycle):
         acc.append(x[actual, initial])
@@ -77,11 +77,11 @@ def create_data_model():
 
     # # Add consrains that all cities must have an arest leaving
     for i in range(n_nodes):
-        solver.Add(solver.Sum(x[i, j] for j in range(n_nodes)) == 1)
+        solver.Add(solver.Sum(x[i, j] for j in range(n_nodes))-x[i, i] == 1)
 
     # # Add consrains that all cities must have an arest arriving
     for j in range(n_nodes):
-        solver.Add(solver.Sum(x[i, j] for i in range(n_nodes)) == 1)
+        solver.Add(solver.Sum(x[i, j] for i in range(n_nodes))-x[i, i] == 1)
 
     # # Add constrains DFJ to sub-tour elimination
     generate_constrains(n_nodes, solver)
