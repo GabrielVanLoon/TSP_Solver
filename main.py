@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-import optparse
 import os
 import os.path
+import optparse
 import src.helper as helper
 
 from ortools.linear_solver import pywraplp
@@ -67,9 +67,9 @@ if __name__=="__main__":
 (options, args) = parser.parse_args()
 
 #Paths to open and create files
-tspPath = "data/raw/"
-csvPath = "data/coord/"
-txtPath = "data/distances/"
+rawPath = "data/raw/"
+coordPath = "data/coord/"
+distPath = "data/distances/"
 routesPath = "data/routes/"
 plotsPath = "images/plots/"
 
@@ -83,13 +83,13 @@ if args[0] == "tsp":
         print("Both input and output filenames are necessary")
 
     #Checks if input file exists
-    elif(not os.path.isfile(tspPath + options.input)):
+    elif(not os.path.isfile(rawPath + options.input)):
         print("Input file does not exist.")
 
     else:
-        if tsp_to_csv(tspPath + options.input, csvPath + options.output):
-            print("Successfully converted raw data into coordinates:")
-            print(csvPath + options.output)
+        if tsp_to_csv(rawPath + options.input, coordPath + options.output):
+            print("Coordinates file successfully created at:")
+            print(coordPath + options.output)
         else:
             print("There was an error with the conversion")
     
@@ -100,13 +100,13 @@ elif args[0] == "dist":
         print("Input and output filenames are necessary")
 
     #Checks if input file exists
-    elif(not os.path.isfile(csvPath + options.input)):
+    elif(not os.path.isfile(coordPath + options.input)):
         print("Input file does not exist.")
 
     else:
-        make_matrix_dist(csvPath + options.input, txtPath + options.output)
-        print("Successfully converted coordinates into distances:")
-        print(txtPath + options.output)
+        make_matrix_dist(coordPath + options.input, distPath + options.output)
+        print("Distances file successfully created at:")
+        print(distPath + options.output)
 
 #Solve problem with chosen method
 #If no method is chosen, use classic_solver method
@@ -116,18 +116,18 @@ elif args[0] == "solve":
         print("Input filename is necessary")
 
     #Checks if input file exists
-    elif(not os.path.isfile(txtPath + options.input)):
+    elif(not os.path.isfile(distPath + options.input)):
         print("Input file does not exist.")
     
-    #
-    elif(options.output != "") and (not os.path.isfile(csvPath + options.coord)):
+    #Checks if coordinates file exists
+    elif(options.output != "") and (not os.path.isfile(coordPath + options.coord)):
         print("Coordinate file does not exist")
 
     else:
         #Gets data from distances .txt file
-        test_data = helper.load_data(txtPath + options.input)
-        #print(test_data)
+        test_data = helper.load_data(distPath + options.input)
 
+        #Checks chosen solving method
         if(options.solver == "dfj"):
             print("Trying to solve problem with Cutting Plane Method...")
             my_solver = CuttingPlane(test_data)
@@ -145,17 +145,22 @@ elif args[0] == "solve":
             print('A Solution was found')
             print('Objective value:', my_solver.objective_value)
 
-            #Checks if filenames are not empty strings (default value)
+            #Checks if output filename is empty
+            #If it is, simply prints the final route
             if (options.output == ""):
                 print('Final Route Configuration: ', my_solver.final_path)
+
+            #If there is an output filename
+            #Creates a route .csv file
             else:
-                route_csv(my_solver.final_path, csvPath + options.coord, routesPath + options.output)
-                print("Final Route Configuration created at:")
+                route_csv(my_solver.final_path, coordPath + options.coord, routesPath + options.output)
+                print("Final Route Configuration succesfully created at:")
                 print(routesPath + options.output)
         
         else:
             print('No optiomal solution was found.')
 
+#Plots the found solution
 elif(args[0] == "plot"):
     #Checks if filenames are not empty strings (default value)
     if(not checkFilenames(options)):
@@ -167,9 +172,11 @@ elif(args[0] == "plot"):
 
     else:
         plot(routesPath + options.input, plotsPath + options.output, options.background)
-        print("Plot created at:")
+        print("Plot image successfully created at:")
         print(plotsPath + options.output)
 
+#Executes in order the commands needed to solve and plot
+#the solution of the problem with just the raw file
 elif(args[0] == "all"):
     if(not checkFilenames(options, outputFlag=False)):
         print("Input filename is necessary")
