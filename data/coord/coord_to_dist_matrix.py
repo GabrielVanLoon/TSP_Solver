@@ -22,7 +22,7 @@ def make_matrix_dist(csv_filename, txt_filename, num_diag = -1, encoder = 'utf-8
             Valor da diagonal na matriz de distancias entre as coordenadas
     '''
 
-    with open(csv_filename, 'r', encoding='utf-8') as csv_file:
+    with open(csv_filename, 'r', encoding=encoder) as csv_file:
 
         reader = list(csv.DictReader(csv_file))
 
