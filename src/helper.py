@@ -1,11 +1,7 @@
 MAXN = 9999
 dir = str('../../tests/')
 
-def default_cast_value(value):
-    return int(value)
-
-
-def load_data(filename,  cast_value = default_cast_value):
+def load_data(filename):
     """
         Read a matrix of cost on the file .txt
         and load into matrix
@@ -24,7 +20,7 @@ def load_data(filename,  cast_value = default_cast_value):
 
     for i in range(len(lines)):
         aux = lines[i][:-1].split('\t')[0].split(' ')
-        aux = [cast_value(i) for i in aux if (i != '')]
+        aux = [i for i in aux if (i != '')]
         cost_matrix.append(aux)
 
     return cost_matrix
