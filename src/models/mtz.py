@@ -1,74 +1,51 @@
-"""
-    TSP solver
-    The Miller, Tucker and Zemlin (MTZ) formulation
-"""
 from __future__ import print_function
 from ortools.linear_solver import pywraplp
+from classic_solver import ClassicSolver
 
-import numpy as np
-import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..')) 
-import helper
+# Sub-tour elimination(MTZ)
+class MTZSolver(ClassicSolver):
+    def __init__(self, distance_matrix):
+        super().__init__(distance_matrix)
+        # New Variables
+        self.u = {}
 
-def create_data_model():
+    def init_variables(self):
+        super().init_variables()
 
-    # Create the mip solver with the SCIP backend.
-    solver = pywraplp.Solver.CreateSolver('SCIP')
+        # Inicializate u real variable from 1, n
+        self.u = {}
+        for i in range(self.n_nodes):
+            self.u[i] = self.solver.NumVar(0, self.n_nodes, '')
+
+    def init_constraints(self):
+        super().init_constraints()
+
+        # Add constrains MTZ to sub-tour elimination
+        for i in range(1, self.n_nodes):
+            for j in range(1, self.n_nodes):
+                if(i != j):
+                    self.solver.Add(self.u[i] - self.u[j] + self.n_nodes*self.x[i, j] <= self.n_nodes - 1)
+
+
+
+
+
+# Execute to test the MTZSolver
+if __name__ == '__main__':
+    test_data =    [[-1, 1, 5, 17, 1],
+                    [1, -1, 7, 5, 9],
+                    [5, 7, -1, 3, 8],
+                    [17, 5, 3, -1, 2],
+                    [1, 9, 8, 2, -1]]
     
-    # Cost[i, j] : cost to go from i to j
-    costs = helper.load_data()
-    n_nodes = len(costs)
-
-    # print(costs)
-    # exit(0)
-    # # Inicializate boolean variable x[i, j]
-    # x[i, j] is one if there a segment from i to j     
-    x = {}
-    for position_from in range(n_nodes):
-        for position_to in range(n_nodes):
-            x[position_from, position_to] = solver.IntVar(0, 1, '')
-
-    # # Inicializate u real variable from 1, n
-    # Sub-tour elimination(MTZ)
-    u = {}
-    for i in range(n_nodes):
-        u[i] = solver.NumVar(0, n_nodes, '')
-
-    # Subject to:
-
-    # # Add consrains that all cities must have an arest leaving
-    for i in range(n_nodes):
-        solver.Add(solver.Sum(x[i, j] for j in range(n_nodes))-x[i, i] == 1)
-
-    # # Add consrains that all cities must have an arest arriving
-    for j in range(n_nodes):
-        solver.Add(solver.Sum(x[i, j] for i in range(n_nodes))-x[i, i] == 1)
-
-    # # Add constrains MTZ to sub-tour elimination
-    for i in range(1, n_nodes):
-        for j in range(1, n_nodes):
-            if(i != j):
-                solver.Add(u[i] - u[j] + n_nodes*x[i, j] <= n_nodes - 1)
-
-    # # Goal function min
-    function_goal = []
-    for i in range(n_nodes):
-        for j in range(n_nodes):    
-            function_goal.append(costs[i][j] * x[i, j])
-
-    # Set goal function to minimizate
-    solver.Minimize(solver.Sum(function_goal))
+    my_solver = MTZSolver(test_data)
+    my_solver.solve()
     
-    status = solver.Solve()
+    if  my_solver.status == pywraplp.Solver.OPTIMAL:
+        my_solver.resolve_final_path()
 
-    if status == pywraplp.Solver.OPTIMAL:
-        print('Solution:')
-        print('Objective value =', solver.Objective().Value())
+        print('Found Solution')
+        print('Objective value:', my_solver.objective_value)
+        print('Variables: ', my_solver.final_path)
     else:
         print('The problem does not have an optimal solution.')
-
-def main():
-    create_data_model()
-
-if __name__ == '__main__':
-    main()
