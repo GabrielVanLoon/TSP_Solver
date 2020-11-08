@@ -1,6 +1,6 @@
 from __future__ import print_function
 from ortools.linear_solver import pywraplp
-from classic_solver import ClassicSolver
+from .classic_solver import ClassicSolver
 
 # Sub-tour elimination(MTZ)
 class CuttingPlane(ClassicSolver):
