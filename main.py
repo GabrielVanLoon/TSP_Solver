@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import optparse
 import os.path
-from src.tsp_to_csv import tsp_to_csv
-from src.coord_to_dist_matrix import make_matrix_dist
+from src.parser.tsp_to_csv import tsp_to_csv
+from src.parser.coord_to_matrix import make_matrix_dist
 
 def checkFilenames(options, inputFlag=True, outputFlag=True):
     '''
