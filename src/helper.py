@@ -19,7 +19,7 @@ def load_data(cast_value = default_cast_value):
     cost_matrix = list()
     
     for line in lines:
-        print(line.split())
+        # print(line.split())
         cost_matrix.append([int(x) for x in line.strip().split('\t')])
 
     # for i in range(len(lines)):
