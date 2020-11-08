@@ -18,7 +18,9 @@ def create_data_model():
     # Cost[i, j] : cost to go from i to j
     costs = helper.load_data()
     n_nodes = len(costs)
-    
+
+    # print(costs)
+    # exit(0)
     # # Inicializate boolean variable x[i, j]
     # x[i, j] is one if there a segment from i to j     
     x = {}
@@ -36,11 +38,11 @@ def create_data_model():
 
     # # Add consrains that all cities must have an arest leaving
     for i in range(n_nodes):
-        solver.Add(solver.Sum(x[i, j] for j in range(n_nodes)) == 1)
+        solver.Add(solver.Sum(x[i, j] for j in range(n_nodes))-x[i, i] == 1)
 
     # # Add consrains that all cities must have an arest arriving
     for j in range(n_nodes):
-        solver.Add(solver.Sum(x[i, j] for i in range(n_nodes)) == 1)
+        solver.Add(solver.Sum(x[i, j] for i in range(n_nodes))-x[i, i] == 1)
 
     # # Add constrains MTZ to sub-tour elimination
     for i in range(1, n_nodes):
@@ -51,7 +53,7 @@ def create_data_model():
     # # Goal function min
     function_goal = []
     for i in range(n_nodes):
-        for j in range(n_nodes):
+        for j in range(n_nodes):    
             function_goal.append(costs[i][j] * x[i, j])
 
     # Set goal function to minimizate
