@@ -2,7 +2,7 @@ import csv
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot(route_filename, img_filename, background=False):
+def plot(route_filename, img_filename, background=False, background_img='./images/backgrounds/galaxy_image.jpg', background_extent=[0, 1920, 0, 1080]):
     '''
     Cria um plot da rota (minima) que passa por todas as coordenadas.
     As informacoes deste plot veem de um arquivo csv com as rotas e plota
@@ -20,6 +20,11 @@ def plot(route_filename, img_filename, background=False):
             flag que indica se o plot vai ter uma image de fundo
             (background=True) ou nao (background=False). Por padrao
             background=False
+        background_img : str
+            Arquivo (Image) de background para o plot
+        background_extent : list(int)
+            Lista de 4 inteiros que indicarao a extensao da imagem de background 
+            do plot. Por padrao as suas coordenadas sao [x0, x1, y0, y1]
     '''
 
     with open(route_filename, 'r') as route_file:
@@ -29,8 +34,8 @@ def plot(route_filename, img_filename, background=False):
         line_color = 'black'
 
         if background:
-            img = plt.imread('galaxy_image.jpg')
-            plt.imshow(img, extent=[0, 1920, 0, 1080])
+            img = plt.imread(background_img)
+            plt.imshow(img, extent=background_extent)
             line_color = 'white'
 
         for row in reader:
@@ -43,4 +48,4 @@ def plot(route_filename, img_filename, background=False):
         
         plt.axis('off')
 
-        plt.savefig(img_filename)
+        plt.savefig(img_filename, transparent=True)
