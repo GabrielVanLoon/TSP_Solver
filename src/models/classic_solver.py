@@ -32,8 +32,10 @@ class ClassicSolver:
         # Inicializate boolean variable x[i, j]
         for position_from in range(self.n_nodes):
             for position_to in range(self.n_nodes):
-                self.x[position_from, position_to] = self.solver.IntVar(0, 1, '')
-
+                if position_from != position_to:
+                    self.x[position_from, position_to] = self.solver.IntVar(0, 1, '')
+                else:
+                    self.x[position_from, position_to] = self.solver.IntVar(0, 0, '')
 
     def init_constraints(self):
         if self.solver is None:
@@ -41,7 +43,7 @@ class ClassicSolver:
 
         # Add consrains that all cities must have an arest leaving
         for i in range(self.n_nodes):
-            self.solver.Add(self.solver.Sum(self.x[i, j] for j in range(self.n_nodes))-self.x[i, i] == 1)
+            self.solver.Add(self.solver.Sum( self.x[i, j] for j in range(self.n_nodes) )-self.x[i, i] == 1)
 
         # Add consrains that all cities must have an arest arriving
         for j in range(self.n_nodes):
@@ -53,8 +55,9 @@ class ClassicSolver:
     
         # Goal function: Minimize the cicle distance
         for i in range(self.n_nodes):
-            for j in range(self.n_nodes):    
-                self.function_goal.append(self.distance[i][j] * self.x[i, j])
+            for j in range(self.n_nodes):
+                if i != j:
+                    self.function_goal.append(self.distance[i][j] * self.x[i, j])
 
         self.solver.Minimize(self.solver.Sum(self.function_goal))
 
@@ -79,7 +82,6 @@ class ClassicSolver:
                 if i != j and self.x[i,j].solution_value():
                     self.final_path.append([i,j])
         
-
 # Execute to test the ClassicSolver
 if __name__ == '__main__':
     test_data =    [[-1, 1, 5, 17, 1],

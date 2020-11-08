@@ -2,6 +2,10 @@ from __future__ import print_function
 from ortools.linear_solver import pywraplp
 from classic_solver import ClassicSolver
 
+import os, sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..')) 
+import helper
+
 # Sub-tour elimination(MTZ)
 class MTZSolver(ClassicSolver):
     def __init__(self, distance_matrix):
@@ -28,16 +32,15 @@ class MTZSolver(ClassicSolver):
 
 
 
-
-
 # Execute to test the MTZSolver
 if __name__ == '__main__':
-    test_data =    [[-1, 1, 5, 17, 1],
-                    [1, -1, 7, 5, 9],
-                    [5, 7, -1, 3, 8],
-                    [17, 5, 3, -1, 2],
-                    [1, 9, 8, 2, -1]]
+    # test_data =    [[-1, 1, 5, 17, 1],
+    #                 [1, -1, 7, 5, 9],
+    #                 [5, 7, -1, 3, 8],
+    #                 [17, 5, 3, -1, 2],
+    #                 [1, 9, 8, 2, -1]]
     
+    test_data = helper.load_data("7.txt")
     my_solver = MTZSolver(test_data)
     my_solver.solve()
     
