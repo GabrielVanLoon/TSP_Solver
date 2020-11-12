@@ -15,6 +15,7 @@ from src.parser.make_route      import route_csv
 from src.models.classic_solver import ClassicSolver
 from src.models.cutting_plane  import CuttingPlane
 from src.models.mtz            import MTZSolver
+from src.models.lazy_cutting_plane import LazyCuttingPlane
 
 def checkFilenames(options, inputFlag=True, outputFlag=True):
     '''
@@ -134,10 +135,25 @@ elif args[0] == "solve":
         elif(options.solver == "mtz"):
             print("Trying to solve problem with MTZ Solver Method...")
             my_solver = MTZSolver(test_data)
+        elif(options.solver == "dfj2"):
+            print("Trying to solve problem with DFJ version 2.0 Method...")
+            my_solver = LazyCuttingPlane(test_data)
         else:
             print("Trying to solve problem with Classic Solver Method...")
             my_solver = ClassicSolver(test_data)
         my_solver.solve()
+
+        if(isinstance(my_solver, LazyCuttingPlane)):
+            max_cycles = 100
+            i = 0
+            while(i < max_cycles):
+                print('The problem does not have an optimal solution in cycle: %d' %(i))
+                print("The upper bound solution is %d " % (my_solver.objective_value))
+                if(my_solver.block_subpath() is True):
+                    my_solver.solve()
+                else:
+                    break
+                i += 1 
 
         if  my_solver.status == pywraplp.Solver.OPTIMAL:
             my_solver.resolve_final_path()
@@ -188,6 +204,8 @@ elif(args[0] == "all"):
             os.system("./main.py solve -i {0}.txt -o {0}.csv -s dfj -C {0}.csv".format(options.input))
         elif(options.solver == "mtz"):
             os.system("./main.py solve -i {0}.txt -o {0}.csv -s mtz -C {0}.csv".format(options.input))
+        elif(options.solver == "dfj2"):
+            os.system("./main.py solve -i {0}.txt -o {0}.csv -s dfj2 -C {0}.csv".format(options.input))
         else:
             os.system("./main.py solve -i {0}.txt -o {0}.csv -C {0}.csv".format(options.input))
         

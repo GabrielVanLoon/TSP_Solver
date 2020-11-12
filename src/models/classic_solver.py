@@ -43,11 +43,11 @@ class ClassicSolver:
 
         # Add consrains that all cities must have an arest leaving
         for i in range(self.n_nodes):
-            self.solver.Add(self.solver.Sum( self.x[i, j] for j in range(self.n_nodes) )-self.x[i, i] == 1)
+            self.solver.Add(self.solver.Sum( self.x[i, j] for j in range(self.n_nodes) ) == 1)
 
         # Add consrains that all cities must have an arest arriving
         for j in range(self.n_nodes):
-            self.solver.Add(self.solver.Sum(self.x[i, j] for i in range(self.n_nodes))-self.x[i, i] == 1)
+            self.solver.Add(self.solver.Sum(self.x[i, j] for i in range(self.n_nodes)) == 1)
     
     def init_goal(self):
         if self.solver is None:

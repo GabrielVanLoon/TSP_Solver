@@ -2,7 +2,7 @@ from __future__ import print_function
 from ortools.linear_solver import pywraplp
 from .classic_solver import ClassicSolver
 
-# Sub-tour elimination(MTZ)
+# Sub-tour elimination(DFJ)
 class CuttingPlane(ClassicSolver):
     def __init__(self, distance_matrix):
         super().__init__(distance_matrix)
@@ -49,7 +49,7 @@ class CuttingPlane(ClassicSolver):
             acc.pop(-1)
         return 
 
-# Execute to test the MTZSolver
+# Execusute to test the MTZSolver
 if __name__ == '__main__':
     test_data =    [[-1, 1, 5, 17, 1],
                     [1, -1, 7, 5, 9],
