@@ -61,19 +61,13 @@ class LazyCuttingPlane(ClassicSolver):
         while(is_sub_path is not True and len(queue) > 0):
             front = queue.pop()
             for i in range(self.n_nodes):
-                # print("Front %d to %d" %(front, i))
                 if(self.x[front, i].solution_value() == 1):
-                    # print(self.x[front, i].solution_value())
                     if(vis[i] == 0):
                         vis[i] = 1
                         queue.append(i)
                         acumulator.append(self.x[front, i])
                         path.append([front, i])
                     else:
-                        # acumulator.append(self.x[front, i])
-                        # path.append([front, i])
-                        # print("I m")
-                        # print(acumulator)
                         if(len(acumulator) < self.n_nodes):
                             is_sub_path = True
                     break   

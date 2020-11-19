@@ -11,15 +11,14 @@ class CuttingPlane(ClassicSolver):
         super().init_constraints()
 
         # Auxiliary array of cities [0, ..., n]
-        next_node = list(range(0, self.n_nodes))
 
         # For all sub-sets() less than the number of cities
         for i in range(2, int(self.n_nodes/2)+1):
+            next_node = list(range(0, self.n_nodes))
             # For all paths, check sub-cicle of length i
             for j in range(0, self.n_nodes):
                 initial = next_node.pop(0)
-                self.all_sub_cycles([], initial, initial, 1, i, next_node.copy())
-                next_node.append(initial)
+                self.all_sub_cycles([], initial, initial, 1, i, next_node)
 
     def all_sub_cycles(self, acc, initial, actual, nivel, length_cycle, next_node):
         '''
@@ -44,6 +43,7 @@ class CuttingPlane(ClassicSolver):
         for j in range(len(next_node)):
             next = next_node.pop(0)
             acc.append(self.x[actual, next])
+            print(actual, end=' ')
             self.all_sub_cycles(acc, initial, next, nivel + 1, length_cycle, next_node)
             next_node.append(next)
             acc.pop(-1)
