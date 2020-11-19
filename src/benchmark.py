@@ -23,7 +23,6 @@ def benchmark(callback, inputs):
     average_time = (t1 - t0) / len(inputs)
     return (average_time, results)
 
-@functools.lru_cache(None)
 def timeit(method):
     '''
         @Decorator timeit
@@ -49,18 +48,22 @@ def timeit(method):
 def classic_solver(test_data, **kwargs):
     my_solver = cs(test_data)
     my_solver.solve()
+    # print( my_solver.objective_value)
     return my_solver.objective_value
 
 @timeit
 def cutting_planes(test_data, **kwargs):
     my_solver = dfj(test_data)
+    my_solver.init_constraints()
     my_solver.solve()
+    # print( my_solver.objective_value)
     return my_solver.objective_value
 
 @timeit
 def miller_method(test_data, **kwargs):
     my_solver = mtz(test_data)
     my_solver.solve()
+    # print( my_solver.objective_value)
     return my_solver.objective_value
 
 @timeit
@@ -79,8 +82,6 @@ def lazy_cutting_planes(test_data, **kwargs):
         i += 1 
     return my_solver.objective_value
 
-
-@functools.lru_cache(None)
 def compare_models():
     '''
         Compara os modelos implementados (tempo) x (n cidades)
@@ -95,28 +96,26 @@ def compare_models():
     # Tempo gerado por execução
     logtime_data = {
         cs_name : [],
+        dfj2_name : [],
         mtz_name : [],
         dfj_name : [],
-        dfj2_name : []
     }
 
+    # Read file from 3 to n.txt
     i = 3
     x = []
     test_data = helper.load_data(distPath + str(i) + '.txt')
-    print(distPath + str(i) + '.txt')
-    while(test_data != []):
+    while(test_data != [] and i < 11):
         # Run methods
         classic_solver(test_data, name= cs_name, log_time= logtime_data)
-        miller_method(test_data, name= mtz_name, log_time= logtime_data)
         cutting_planes(test_data, name= dfj_name, log_time= logtime_data)
         lazy_cutting_planes(test_data, name= dfj2_name, log_time= logtime_data)
+        miller_method(test_data, name= mtz_name, log_time= logtime_data)
 
         # Load dara
         x.append(i);
         i += 1
         test_data = helper.load_data(distPath + str(i) + '.txt')
-
-    print(logtime_data)
     return [x, logtime_data]
 
 def plot_time_execution(x, logtime_data, filename='default'):
@@ -137,7 +136,7 @@ def plot_time_execution(x, logtime_data, filename='default'):
     ax.set(title="Tempo(s) de execução em função de N", xlabel="N", ylabel="Tempo(milesegundos)");
     ax.legend(loc="best", fontsize='large');
 
-    plt.savefig(plotsPath + filename, transparent=True)
+    plt.savefig(plotsPath + filename, transparent=False)
 
 x, logtime_data = compare_models()
-plot_time_execution(x=x, logtime_data=logtime_data)
+plot_time_execution(x=x, logtime_data=logtime_data, filename='2')

@@ -14,14 +14,11 @@ class LazyCuttingPlane(ClassicSolver):
     def add_res(self, n):
         # Auxiliary array of cities [0, ..., n]
         next_node = list(range(0, self.n_nodes))
-
-        # For all sub-sets() less than the number of cities
         
         # For all paths, check sub-cicle of length i
         for j in range(0, self.n_nodes):
             initial = next_node.pop(0)
             self.all_sub_cycles([], initial, initial, 1, n, next_node.copy())
-            next_node.append(initial)
 
     def all_sub_cycles(self, acc, initial, actual, nivel, length_cycle, next_node):
         '''
@@ -96,7 +93,10 @@ if __name__ == '__main__':
                     [1, 9, 8, 2, -1]]
     
     my_solver = LazyCuttingPlane(test_data)
-    
+    if(self.n_nodes > 3):
+        my_solver.add_res(2);
+        my_solver.add_res(3);
+
     max_cycles = 4
     i = 0
     while(i < max_cycles):

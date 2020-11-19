@@ -1,11 +1,10 @@
-from __future__ import print_function
 from ortools.linear_solver import pywraplp
 from .classic_solver import ClassicSolver
 
 # Sub-tour elimination(DFJ)
 class CuttingPlane(ClassicSolver):
     def __init__(self, distance_matrix):
-        super().__init__(distance_matrix, 'INTEGER')
+        super().__init__(distance_matrix)
 
     def init_constraints(self):
         super().init_constraints()
