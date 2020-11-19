@@ -49,7 +49,6 @@ def print_solution(manager, routing, solution):
     print(plan_output)
     plan_output += 'Route distance: {}miles\n'.format(route_distance)
 
-
 def main():
     """Entry point of the program."""
     # Instantiate the data problem.

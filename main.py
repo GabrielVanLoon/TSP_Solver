@@ -147,7 +147,7 @@ elif args[0] == "solve":
             max_cycles = 100
             i = 0
             while(i < max_cycles):
-                print('The problem does not have an optimal solution in cycle: %d' %(i))
+                # print('The problem does not have an optimal solution in cycle: %d' %(i))
                 print("The upper bound solution is %d " % (my_solver.objective_value))
                 if(my_solver.block_subpath() is True):
                     my_solver.solve()
