@@ -5,7 +5,7 @@ from .classic_solver import ClassicSolver
 # Sub-tour elimination(DFJ)
 class CuttingPlane(ClassicSolver):
     def __init__(self, distance_matrix):
-        super().__init__(distance_matrix)
+        super().__init__(distance_matrix, 'INTEGER')
 
     def init_constraints(self):
         super().init_constraints()
@@ -43,7 +43,6 @@ class CuttingPlane(ClassicSolver):
         for j in range(len(next_node)):
             next = next_node.pop(0)
             acc.append(self.x[actual, next])
-            print(actual, end=' ')
             self.all_sub_cycles(acc, initial, next, nivel + 1, length_cycle, next_node)
             next_node.append(next)
             acc.pop(-1)

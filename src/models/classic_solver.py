@@ -2,7 +2,7 @@ from __future__ import print_function
 from ortools.linear_solver import pywraplp
 
 class ClassicSolver:
-    def __init__(self, distance_matrix):
+    def __init__(self, distance_matrix, dom='REAL'):
         # Variables
         self.distance = distance_matrix
         self.n_nodes = len(distance_matrix)
@@ -16,14 +16,18 @@ class ClassicSolver:
         self.final_path = None
 
         # Execute initializations
-        self.init_solver()
+        self.init_solver(dom)
         self.init_variables()
         self.init_constraints()
         self.init_goal()
 
-    def init_solver(self):
-        self.solver = pywraplp.Solver.CreateSolver('SCIP')
-
+    def init_solver(self, dom='REAL'):
+        if(dom == 'REAL'):
+            self.solver = pywraplp.Solver.CreateSolver('SCIP')
+        else:
+            # Integer solver for DFJ
+            # https://groups.google.com/forum/#!msg/or-tools-discuss/p5qVzZWIeIg/g77egaD-AAAJ
+            self.solver = pywraplp.Solver('BOP', pywraplp.Solver.BOP_INTEGER_PROGRAMMING)
 
     def init_variables(self):
         if self.solver is None:

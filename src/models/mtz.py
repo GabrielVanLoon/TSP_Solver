@@ -19,7 +19,7 @@ class MTZSolver(ClassicSolver):
         # Inicializate u real variable from 1, n
         self.u = {}
         for i in range(self.n_nodes):
-            self.u[i] = self.solver.NumVar(1, self.n_nodes, '')
+            self.u[i] = self.solver.NumVar(1, self.n_nodes-1, '')
 
     def init_constraints(self):
         super().init_constraints()
