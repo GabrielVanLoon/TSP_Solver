@@ -143,23 +143,12 @@ elif args[0] == "solve":
             my_solver = ClassicSolver(test_data)
         my_solver.solve()
 
-        if(isinstance(my_solver, LazyCuttingPlane)):
-            max_cycles = 100
-            i = 0
-            while(i < max_cycles):
-                # print('The problem does not have an optimal solution in cycle: %d' %(i))
-                print("The upper bound solution is %d " % (my_solver.objective_value))
-                if(my_solver.block_subpath() is True):
-                    my_solver.solve()
-                else:
-                    break
-                i += 1 
-
         if  my_solver.status == pywraplp.Solver.OPTIMAL:
+            
             my_solver.resolve_final_path()
 
             print('A Solution was found')
-            print('Objective value:', my_solver.objective_value)
+            print('Objective value:', round(my_solver.objective_value, 1))
 
             #Checks if output filename is empty
             #If it is, simply prints the final route

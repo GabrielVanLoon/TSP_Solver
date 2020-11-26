@@ -11,8 +11,8 @@ from models.mtz            import MTZSolver     as mtz
 from models.lazy_cutting_plane import LazyCuttingPlane as dfj2
 
 
-distPath = "data/distances/"
-plotsPath = "benchmarks/images/"
+distPath = "../data/distances/"
+plotsPath = "../benchmarks/images/"
 
 @functools.lru_cache(None)
 def benchmark(callback, inputs):
@@ -105,7 +105,7 @@ def compare_models():
     i = 3
     x = []
     test_data = helper.load_data(distPath + str(i) + '.txt')
-    while(test_data != [] and i < 11):
+    while(test_data != [] and i < 12):
         # Run methods
         classic_solver(test_data, name= cs_name, log_time= logtime_data)
         cutting_planes(test_data, name= dfj_name, log_time= logtime_data)
@@ -139,4 +139,4 @@ def plot_time_execution(x, logtime_data, filename='default'):
     plt.savefig(plotsPath + filename, transparent=False)
 
 x, logtime_data = compare_models()
-plot_time_execution(x=x, logtime_data=logtime_data, filename='2')
+plot_time_execution(x=x, logtime_data=logtime_data, filename='4')
