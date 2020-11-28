@@ -28,7 +28,7 @@ class MTZSolver(ClassicSolver):
         for i in range(1, self.n_nodes):
             for j in range(1, self.n_nodes):
                 if(i != j):
-                    self.solver.Add(self.u[i] - self.u[j] + (self.n_nodes*self.x[i, j]) <= self.n_nodes - 1)
+                    self.solver.Add(self.u[i] - self.u[j] + ((self.n_nodes-1)*self.x[i, j]) <= self.n_nodes - 2)
 
 # Execute to test the MTZSolver
 if __name__ == '__main__':

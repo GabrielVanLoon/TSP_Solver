@@ -21,6 +21,7 @@ class ClassicSolver:
         self.init_constraints()
         self.init_goal()
 
+    #
     def init_solver(self):
         self.solver = pywraplp.Solver.CreateSolver('SCIP')
           

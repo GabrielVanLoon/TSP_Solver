@@ -23,6 +23,8 @@ def benchmark(callback, inputs):
     average_time = (t1 - t0) / len(inputs)
     return (average_time, results)
 
+# TODO: passar para segundos ou outra escala mais ...
+# TODO: testas por instancia
 def timeit(method):
     '''
         @Decorator timeit
@@ -102,6 +104,7 @@ def compare_models():
     }
 
     # Read file from 3 to n.txt
+    # save to file
     i = 3
     x = []
     test_data = helper.load_data(distPath + str(i) + '.txt')
