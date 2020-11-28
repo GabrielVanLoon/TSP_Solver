@@ -16,6 +16,7 @@ from src.models.classic_solver import ClassicSolver
 from src.models.cutting_plane  import CuttingPlane
 from src.models.mtz            import MTZSolver
 from src.models.lazy_cutting_plane import LazyCuttingPlane
+from src.models.df import DFSolver
 
 def checkFilenames(options, inputFlag=True, outputFlag=True):
     '''
@@ -138,13 +139,15 @@ elif args[0] == "solve":
         elif(options.solver == "dfj2"):
             print("Trying to solve problem with DFJ version 2.0 Method...")
             my_solver = LazyCuttingPlane(test_data)
+        elif(options.solver == "df"):
+            print("Trying to solve problem with DF version Method...")
+            my_solver = DFSolver(test_data)
         else:
             print("Trying to solve problem with Classic Solver Method...")
             my_solver = ClassicSolver(test_data)
         my_solver.solve()
 
-        if  my_solver.status == pywraplp.Solver.OPTIMAL:
-            
+        if  my_solver.status == pywraplp.Solver.OPTIMAL:            
             my_solver.resolve_final_path()
 
             print('A Solution was found')
@@ -162,6 +165,17 @@ elif args[0] == "solve":
                 print("Final Route Configuration succesfully created at:")
                 print(routesPath + options.output)
         
+        elif my_solver.status == pywraplp.Solver.FEASIBLE:
+            if  my_solver.status == pywraplp.Solver.OPTIMAL:            
+                my_solver.resolve_final_path()
+
+                print('An aproximation Solution was found')
+                print('Objective value:', round(my_solver.objective_value, 1))
+
+            #Checks if output filename is empty
+            #If it is, simply prints the final route
+                if (options.output == ""):
+                    print('Final Route Configuration: ', my_solver.final_path)
         else:
             print('No optiomal solution was found.')
 
