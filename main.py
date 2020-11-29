@@ -16,7 +16,8 @@ from src.models.classic_solver import ClassicSolver
 from src.models.cutting_plane  import CuttingPlane
 from src.models.mtz            import MTZSolver
 from src.models.lazy_cutting_plane import LazyCuttingPlane
-from src.models.df import DFSolver
+from src.models.dl import DLSolver
+from src.models.gg import GGSolver
 
 def checkFilenames(options, inputFlag=True, outputFlag=True):
     '''
@@ -139,9 +140,12 @@ elif args[0] == "solve":
         elif(options.solver == "dfj2"):
             print("Trying to solve problem with DFJ version 2.0 Method...")
             my_solver = LazyCuttingPlane(test_data)
-        elif(options.solver == "df"):
-            print("Trying to solve problem with DF version Method...")
-            my_solver = DFSolver(test_data)
+        elif(options.solver == "dl"):
+            print("Trying to solve problem with DL version Method...")
+            my_solver = DLSolver(test_data)
+        elif(options.solver == "gg"):
+            print("Trying to solve problem with GG version Method...")
+            my_solver = GGSolver(test_data)
         else:
             print("Trying to solve problem with Classic Solver Method...")
             my_solver = ClassicSolver(test_data)
