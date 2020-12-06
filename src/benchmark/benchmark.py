@@ -67,25 +67,52 @@ def timeit(method):
 def miller_method(test_data, **kwargs):
     my_solver = mtz(test_data)
     my_solver.solve()
+    if 'log_up' in kwargs:
+        kwargs['log_up'][mtz.__name__].append(my_solver.solver.Objective().BestBound())
+
+    if 'log_down' in kwargs:
+        kwargs['log_down'][mtz.__name__].append(my_solver.solver.Objective().BestBound())
+
     return round(my_solver.objective_value, 1)
 
 @timeit
 def dl_method(test_data, **kwargs):
     my_solver = dl(test_data)
     my_solver.solve()
+
+    if 'log_up' in kwargs:
+        kwargs['log_up'][dl.__name__].append(my_solver.solver.Constraint().Ub())
+
+    if 'log_down' in kwargs:
+            kwargs['log_down'][dl.__name__].append(my_solver.solver.Constraint().Lb())
+
     return round(my_solver.objective_value, 1)
 
 @timeit
 def lazy_cutting_planes(test_data, **kwargs):
     my_solver = dfj2(test_data)
     my_solver.solve()
+
+    if 'log_up' in kwargs:
+        kwargs['log_up'][dfj2.__name__].append(my_solver.solver.Constraint().Ub())
+
+    if 'log_down' in kwargs:
+        kwargs['log_down'][dfj2.__name__].append(my_solver.solver.Constraint().Lb())
+
     return round(my_solver.objective_value, 1)
 
 @timeit 
 def gg_method(test_data, **kwargs):
     my_solver = gg(test_data)
     my_solver.solve()
-    return round(my_solver.objective_value)
+    
+    if 'log_up' in kwargs:
+        kwargs['log_up'][gg.__name__].append(my_solver.solver.Constraint().Ub())
+
+    if 'log_down' in kwargs:
+        kwargs['log_down'][gg.__name__].append(my_solver.solver.Constraint().Lb())
+
+    return round(my_solver.objective_value, 1)
 
 def compare_models(filename_sample, filename_results, index_start=-1, index_end=-1, step=1, comment="No comments"):
     '''
@@ -126,10 +153,16 @@ def compare_models(filename_sample, filename_results, index_start=-1, index_end=
     # Tempo gerado por execução
     logvalue_data = {}
 
+    # Limitante superior
+    logup_data = {}
+
+    # Limitante inferior 
+    logdown_data = {}
+
     # Results runtime
     try:
         # Load previous data
-        x, logtime_data, logvalue_data = load_results(filename_results)
+        x, logtime_data, logvalue_data, logup_data, logdown_data = load_results(filename_results)
 
         # Index not specified, take last used
         if len(x):
@@ -153,6 +186,18 @@ def compare_models(filename_sample, filename_results, index_start=-1, index_end=
             dl_name: [],
             gg_name: [],
         }
+
+        logup_data = {
+            mtz_name : [],
+            dl_name: [],
+            gg_name: [],
+        }
+
+        logdown_data = {
+            mtz_name : [],
+            dl_name: [],
+            gg_name: [],
+        }
     
     # Load matrix
     test_data = helper.load_data(distPath + filename_sample)
@@ -164,9 +209,9 @@ def compare_models(filename_sample, filename_results, index_start=-1, index_end=
     i = int(index_start)
     while(test_data != [] and i <= index_end):
         # Run methods
-        logvalue_data[mtz_name].append(miller_method(test_data[:i][:i], name= mtz_name, log_time= logtime_data))
-        logvalue_data[dl_name].append(dl_method(test_data[:i][:i], name= dl_name, log_time= logtime_data))
-        logvalue_data[gg_name].append(gg_method(test_data[:i][:i], name= gg_name, log_time= logtime_data))
+        logvalue_data[mtz_name].append(miller_method(test_data[:i][:i], name= mtz_name, log_time= logtime_data, log_up=logup_data, log_down=logdown_data))
+        logvalue_data[dl_name].append(dl_method(test_data[:i][:i], name= dl_name, log_time= logtime_data, log_up=logup_data, log_down=logdown_data))
+        logvalue_data[gg_name].append(gg_method(test_data[:i][:i], name= gg_name, log_time= logtime_data, log_up=logup_data, log_down=logdown_data))
         
         # Load x (horizontal)
         x.append(i);
@@ -175,7 +220,7 @@ def compare_models(filename_sample, filename_results, index_start=-1, index_end=
     if(x == [] or logtime_data == {}):
         return
 
-    store_results(filename_results, x, logtime_data, logvalue_data, comment)
+    store_results(filename_results, x, logtime_data, logvalue_data, logup_data, logdown_data, comment)
     return x, logtime_data
 
 def plot_time_execution(x, logtime_data, filename='default'):
@@ -208,5 +253,5 @@ if __name__ == "__main__":
     #     compare_models('uruguay734.txt', 'uruuay734.txt', index_end=i, step=5, comment="Running all night for qatar!")
     #     i += 5 
 
-    x, logtime_data = compare_models(NAME_FILES + EXTENSION, NAME_FILES + EXTENSION, index_start=194, index_end=194, step=1, comment="Running " + NAME_FILES)
+    x, logtime_data = compare_models(NAME_FILES + EXTENSION, NAME_FILES + EXTENSION, comment="Running " + NAME_FILES)
     plot_time_execution(x=x, logtime_data=logtime_data, filename=NAME_FILES)

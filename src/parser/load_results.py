@@ -53,12 +53,29 @@ def load_results(results_filename):
         # default_name: [],
     }
 
+    # Upper bound solution
+    logup_data = {
+        gg_name: [],
+        mtz_name : [],
+        dl_name: [],
+        # default_name: [],
+    }
+
+    # Lower bound  solution
+    logdown_data = {
+        gg_name: [],
+        mtz_name : [],
+        dl_name: [],
+        # default_name: [],
+    }
 
     horizontal =  []
 
     with open(DIR + results_filename, 'r', encoding='utf-8') as results_file:
         time_reference = 'TIME_SECTION\n'
         value_reference = 'VALUES_SECTION\n'
+        bound_up_reference = 'UPPER_BOUND_SECTION\n'
+        bound_down_reference = 'LOWER_BOUND_SECTION\n'
         end_reference = 'EOF\n'
 
         reader = results_file.readlines()
@@ -83,13 +100,28 @@ def load_results(results_filename):
             line = row.strip().split()
             logtime_data[line[0][:-1]] = [float(x) for x in line[1:] if x != '']
 
+        # Read results objctive values
         start = reader.index(value_reference) + 1
         end = start + dim
         for row in reader[start:end]:
             line = row.strip().split()
             logvalue_data[line[0][:-1]] = [float(x) for x in line[1:] if x != '']
+        
+        # Read results up values
+        start = reader.index(bound_up_reference) + 1
+        end = start + dim
+        for row in reader[start:end]:
+            line = row.strip().split()
+            logup_data[line[0][:-1]] = [float(x) for x in line[1:] if x != '']
+        
+        # Read results lower bound
+        start = reader.index(bound_down_reference) + 1
+        end = start + dim
+        for row in reader[start:end]:
+            line = row.strip().split()
+            logdown_data[line[0][:-1]] = [float(x) for x in line[1:] if x != '']
 
-    return horizontal, logtime_data, logvalue_data
+    return horizontal, logtime_data, logvalue_data, logup_data, logdown_data
 
 if __name__ == "__main__":
     results_to_logdata('../../benchmarks/results/libra6.txt')

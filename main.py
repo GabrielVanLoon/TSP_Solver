@@ -137,12 +137,12 @@ elif args[0] == "solve":
         elif(options.solver == "mtz"):
             print("Trying to solve problem with MTZ Solver Method...")
             my_solver = MTZSolver(test_data)
-        elif(options.solver == "dfj2"):
-            print("Trying to solve problem with DFJ version 2.0 Method...")
-            my_solver = LazyCuttingPlane(test_data)
         elif(options.solver == "dl"):
             print("Trying to solve problem with DL version Method...")
             my_solver = DLSolver(test_data)
+        elif(options.solver == "dfj2"):
+            print("Trying to solve problem with DFJ version 2.0 Method...")
+            my_solver = LazyCuttingPlane(test_data)
         elif(options.solver == "gg"):
             print("Trying to solve problem with GG version Method...")
             my_solver = GGSolver(test_data)
@@ -151,7 +151,7 @@ elif args[0] == "solve":
             my_solver = ClassicSolver(test_data)
         my_solver.solve()
 
-        if  my_solver.status == pywraplp.Solver.OPTIMAL:            
+        if  my_solver.status == pywraplp.Solver.OPTIMAL or my_solver.status == pywraplp.Solver.FEASIBLE:            
             my_solver.resolve_final_path()
 
             print('A Solution was found')
@@ -169,17 +169,6 @@ elif args[0] == "solve":
                 print("Final Route Configuration succesfully created at:")
                 print(routesPath + options.output)
         
-        elif my_solver.status == pywraplp.Solver.FEASIBLE:
-            if  my_solver.status == pywraplp.Solver.OPTIMAL:            
-                my_solver.resolve_final_path()
-
-                print('An aproximation Solution was found')
-                print('Objective value:', round(my_solver.objective_value, 1))
-
-            #Checks if output filename is empty
-            #If it is, simply prints the final route
-                if (options.output == ""):
-                    print('Final Route Configuration: ', my_solver.final_path)
         else:
             print('No optiomal solution was found.')
 
@@ -201,12 +190,13 @@ elif(args[0] == "plot"):
 #Executes in order the commands needed to solve and plot
 #the solution of the problem with just the raw file
 elif(args[0] == "all"):
+    print("REAL SOLVER" + options.solver)
     if(not checkFilenames(options, outputFlag=False)):
         print("Input filename is necessary")
     else:
         os.system("./main.py tsp -i {0}.tsp -o {0}.csv".format(options.input))
         os.system("./main.py dist -i {0}.csv -o {0}.txt".format(options.input))
-
+        print("REAL SOLVER" + options.solver)
         if(options.solver == "dfj"):
             os.system("./main.py solve -i {0}.txt -o {0}.csv -s dfj -C {0}.csv".format(options.input))
         elif(options.solver == "mtz"):
@@ -214,9 +204,10 @@ elif(args[0] == "all"):
         elif(options.solver == "dfj2"):
             os.system("./main.py solve -i {0}.txt -o {0}.csv -s dfj2 -C {0}.csv".format(options.input))
         elif(options.solver == "dl"):
-            os.system("./main.py solve -i {0}.txt -o {0}.csv -s dfj2 -C {0}.csv".format(options.input))
+            print("SOLVER: DL")
+            os.system("./main.py solve -i {0}.txt -o {0}.csv -s dl -C {0}.csv".format(options.input))
         else:
-            os.system("./main.py solve -i {0}.txt -o {0}.csv -C {0}.csv".format(options.input))
+            os.system("./main.py solve -i {0}.txt -o {0}.csv -s dl -C {0}.csv".format(options.input))
         
         os.system("./main.py plot -i {0}.csv -o {0}.png".format(options.input))
 
