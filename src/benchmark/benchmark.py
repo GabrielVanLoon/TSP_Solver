@@ -14,16 +14,22 @@ from models.cutting_plane  import CuttingPlane  as dfj
 from models.mtz            import MTZSolver     as mtz
 from models.lazy_cutting_plane import LazyCuttingPlane as dfj2
 from models.dl import DLSolver as dl
+from models.gg import GGSolver as gg
 from models.routing_tsp import DefaultSolver as default
 from load_results import load_results 
 from store_results import store_results 
 from make_route import route_csv
 from plot_route import plot
 
-distPath = "../data/distances/"
-plotsPath = "../benchmarks/images/"
-resultsPath = "../benchmarks/results/"
-routesPath = "../data/routes/"
+NAME_FILES = 'qatar194'
+EXTENSION = '.txt'
+
+distPath = "../../data/distances/"
+plotsPath = "../../benchmarks/images/"
+resultsPath = "../../benchmarks/results/"
+routesPath = "../../data/routes/"
+coordPath = "../../data/coord/"
+routesPath = "../../data/routes/"
 
 @functools.lru_cache(None)
 def benchmark(callback, inputs):
@@ -57,37 +63,55 @@ def timeit(method):
         return result
     return timed
 
-coordPath = "../data/coord/"
-routesPath = "../data/routes/"
-
-@timeit
-def classic_solver(test_data, **kwargs):
-    my_solver = cs(test_data)
-    my_solver.solve()
-    return round(my_solver.objective_value, 1)
-
-@timeit
-def cutting_planes(test_data, **kwargs):
-    my_solver = dfj(test_data)
-    my_solver.solve()
-    return round(my_solver.objective_value, 1)
-
 @timeit
 def miller_method(test_data, **kwargs):
     my_solver = mtz(test_data)
     my_solver.solve()
+    if 'log_up' in kwargs:
+        kwargs['log_up'][mtz.__name__].append(my_solver.solver.Objective().BestBound())
+
+    if 'log_down' in kwargs:
+        kwargs['log_down'][mtz.__name__].append(my_solver.solver.Objective().BestBound())
+
     return round(my_solver.objective_value, 1)
 
 @timeit
 def dl_method(test_data, **kwargs):
     my_solver = dl(test_data)
     my_solver.solve()
+
+    if 'log_up' in kwargs:
+        kwargs['log_up'][dl.__name__].append(my_solver.solver.Constraint().Ub())
+
+    if 'log_down' in kwargs:
+            kwargs['log_down'][dl.__name__].append(my_solver.solver.Constraint().Lb())
+
     return round(my_solver.objective_value, 1)
 
 @timeit
 def lazy_cutting_planes(test_data, **kwargs):
     my_solver = dfj2(test_data)
     my_solver.solve()
+
+    if 'log_up' in kwargs:
+        kwargs['log_up'][dfj2.__name__].append(my_solver.solver.Constraint().Ub())
+
+    if 'log_down' in kwargs:
+        kwargs['log_down'][dfj2.__name__].append(my_solver.solver.Constraint().Lb())
+
+    return round(my_solver.objective_value, 1)
+
+@timeit 
+def gg_method(test_data, **kwargs):
+    my_solver = gg(test_data)
+    my_solver.solve()
+    
+    if 'log_up' in kwargs:
+        kwargs['log_up'][gg.__name__].append(my_solver.solver.Constraint().Ub())
+
+    if 'log_down' in kwargs:
+        kwargs['log_down'][gg.__name__].append(my_solver.solver.Constraint().Lb())
+
     return round(my_solver.objective_value, 1)
 
 def compare_models(filename_sample, filename_results, index_start=-1, index_end=-1, step=1, comment="No comments"):
@@ -110,14 +134,15 @@ def compare_models(filename_sample, filename_results, index_start=-1, index_end=
                 Passo que acrescenta pontos do teste
     '''
 
-    cs_name = cs.__name__;
+    # cs_name = cs.__name__;
     mtz_name = mtz.__name__;
-    dfj_name = dfj.__name__;
-    dfj2_name = dfj2.__name__;
+    # dfj_name = dfj.__name__;
+    # dfj2_name = dfj2.__name__;
     dl_name = dl.__name__;
+    gg_name = gg.__name__;
     # default_name = default.__name__;
 
-    print(cs_name + ' ' + ' ' + dfj_name + ' ' + mtz_name + ' ' + dfj2_name + ' ' + dl_name)
+    print(mtz_name + ' ' + ' ' + dl_name + ' ' + gg_name)
 
     # Valores horizontais
     x = []
@@ -128,10 +153,16 @@ def compare_models(filename_sample, filename_results, index_start=-1, index_end=
     # Tempo gerado por execução
     logvalue_data = {}
 
+    # Limitante superior
+    logup_data = {}
+
+    # Limitante inferior 
+    logdown_data = {}
+
     # Results runtime
     try:
         # Load previous data
-        x, logtime_data, logvalue_data = load_results(filename_results)
+        x, logtime_data, logvalue_data, logup_data, logdown_data = load_results(filename_results)
 
         # Index not specified, take last used
         if len(x):
@@ -145,47 +176,51 @@ def compare_models(filename_sample, filename_results, index_start=-1, index_end=
         x = []
 
         logtime_data = {
-            cs_name : [],
-            dfj2_name : [],
             mtz_name : [],
-            dfj_name : [],
             dl_name: [],
-            # default_name: [],
+            gg_name: [],
         }
 
         logvalue_data = {
-            cs_name : [],
-            dfj2_name : [],
             mtz_name : [],
-            dfj_name : [],
             dl_name: [],
-            # default_name: [],
+            gg_name: [],
+        }
+
+        logup_data = {
+            mtz_name : [],
+            dl_name: [],
+            gg_name: [],
+        }
+
+        logdown_data = {
+            mtz_name : [],
+            dl_name: [],
+            gg_name: [],
         }
     
     # Load matrix
     test_data = helper.load_data(distPath + filename_sample)
-    print(test_data)
-    if(index_end == -1):
+
+    # If end not specied, run all tests
+    if(index_end == -1 or index_end > len(test_data)):
         index_end = len(test_data)
 
     i = int(index_start)
     while(test_data != [] and i <= index_end):
         # Run methods
-        print("RUN")
-        logvalue_data[cs_name].append(classic_solver(test_data[:i][:i], name= cs_name, log_time= logtime_data))
-        logvalue_data[dfj_name].append(cutting_planes(test_data[:i][:i], name= dfj_name, log_time= logtime_data))
-        logvalue_data[dfj2_name].append(lazy_cutting_planes(test_data[:i][:i], name= dfj2_name, log_time= logtime_data))
-        logvalue_data[mtz_name].append(miller_method(test_data[:i][:i], name= mtz_name, log_time= logtime_data))
-        logvalue_data[dl_name].append(dl_method(test_data[:i][:i], name= dl_name, log_time= logtime_data))
-
-        # Load data
+        logvalue_data[mtz_name].append(miller_method(test_data[:i][:i], name= mtz_name, log_time= logtime_data, log_up=logup_data, log_down=logdown_data))
+        logvalue_data[dl_name].append(dl_method(test_data[:i][:i], name= dl_name, log_time= logtime_data, log_up=logup_data, log_down=logdown_data))
+        logvalue_data[gg_name].append(gg_method(test_data[:i][:i], name= gg_name, log_time= logtime_data, log_up=logup_data, log_down=logdown_data))
+        
+        # Load x (horizontal)
         x.append(i);
         i += step
 
     if(x == [] or logtime_data == {}):
         return
 
-    store_results(filename_results, x, logtime_data, logvalue_data, comment)
+    store_results(filename_results, x, logtime_data, logvalue_data, logup_data, logdown_data, comment)
     return x, logtime_data
 
 def plot_time_execution(x, logtime_data, filename='default'):
@@ -199,6 +234,7 @@ def plot_time_execution(x, logtime_data, filename='default'):
 
     # Plot execution time
     for key in logtime_data:
+        print(logtime_data[key])
         ax.plot(x, logtime_data[key], label= key + " time",  linewidth=3.5);
         ax.scatter(x, logtime_data[key]);
     
@@ -208,10 +244,14 @@ def plot_time_execution(x, logtime_data, filename='default'):
 
     plt.savefig(plotsPath + filename, transparent=False)
 
-i = 5
-while i < 730:
-    compare_models('uruguay734.txt', 'uruguay734.txt', index_end=i, step=5, comment="Running all night for qatar!")
-    i += 5 
+if __name__ == "__main__":
+    
+    i = 5
+    logtime_data = {}
+    x = []
+    # while i < 15:
+    #     compare_models('uruguay734.txt', 'uruuay734.txt', index_end=i, step=5, comment="Running all night for qatar!")
+    #     i += 5 
 
-compare_models('uruguay734.txt', 'uru.txt', index_end=11, step=1, comment="Running uruguay!")
-plot_time_execution(x=x, logtime_data=logtime_data, filename='22')
+    x, logtime_data = compare_models(NAME_FILES + EXTENSION, NAME_FILES + EXTENSION, comment="Running " + NAME_FILES)
+    plot_time_execution(x=x, logtime_data=logtime_data, filename=NAME_FILES)

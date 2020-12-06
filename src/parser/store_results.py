@@ -2,7 +2,7 @@ from math import ceil
 
 DIR = '../../benchmarks/results/'
 
-def store_results(results_filename, x, logtime_data, logvalue_data, comment):
+def store_results(results_filename, x, logtime_data, logvalue_data, logup_data, logdown_data, comment):
     '''
     Salva testes em benchmarks resultados
     
@@ -26,10 +26,12 @@ def store_results(results_filename, x, logtime_data, logvalue_data, comment):
         if x is None or len(x) is False or logtime_data is None or logvalue_data is None:
             return False 
 
+        dim = len(logtime_data)
+
         results_file.write(f'NAME: {results_filename}\n')
         results_file.write(f'COMMENT: {comment}\n')
         results_file.write(f'TYPE: txt\n')
-        results_file.write(f'DIMENSION: 5\n')
+        results_file.write(f'DIMENSION: {dim}\n') 
         results_file.write(f'LAST_RUN: {x[-1]}\n')
 
         # Hotizontal values
@@ -51,6 +53,22 @@ def store_results(results_filename, x, logtime_data, logvalue_data, comment):
         for key in logvalue_data:
             results_file.write(f'{key}:')
             for value in logvalue_data[key]:
+                results_file.write(f' {value}')
+            results_file.write(f'\n')
+
+        # upper bound
+        results_file.write(f'UPPER_BOUND_SECTION\n')
+        for key in logup_data:
+            results_file.write(f'{key}:')
+            for value in logup_data[key]:
+                results_file.write(f' {value}')
+            results_file.write(f'\n')
+
+        # values
+        results_file.write(f'LOWER_BOUND_SECTION\n')
+        for key in logdown_data:
+            results_file.write(f'{key}:')
+            for value in logdown_data[key]:
                 results_file.write(f' {value}')
             results_file.write(f'\n')
         return True

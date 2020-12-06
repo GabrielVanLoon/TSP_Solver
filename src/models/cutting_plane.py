@@ -12,7 +12,7 @@ class CuttingPlane(ClassicSolver):
         # Auxiliary array of cities [0, ..., n]
 
         # For all sub-sets() less than the number of cities
-        for i in range(2, min(5,int(self.n_nodes/2)+1)):
+        for i in range(2, int(self.n_nodes/2)):
             next_node = list(range(0, self.n_nodes))
             # For all paths, check sub-cicle of length i
             for j in range(0, self.n_nodes):

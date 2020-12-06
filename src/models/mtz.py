@@ -19,7 +19,7 @@ class MTZSolver(ClassicSolver):
         # Inicializate u real variable from 1, n
         self.u = {}
         for i in range(self.n_nodes):
-            self.u[i] = self.solver.IntVar(0, self.n_nodes, '')
+            self.u[i] = self.solver.NumVar(0, self.n_nodes, '')
 
         # Inicialize variables using Hint
         if self.initial_solution is not None:

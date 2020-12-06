@@ -19,3 +19,6 @@ def plot_time_execution(x, logtime_data, filename='default'):
     ax.legend(loc="best", fontsize='large');
 
     plt.savefig(plotsPath + filename, transparent=False)
+
+FILE_NAMES = ['qatar194_dl.out', 'qatar194_mtz.out']
+def plot_solution():
