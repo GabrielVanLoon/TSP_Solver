@@ -183,7 +183,7 @@ elif args[0] == "solve":
 
         my_solver.solve()
 
-        if  my_solver.status == pywraplp.Solver.OPTIMAL:            
+        if  my_solver.status == pywraplp.Solver.OPTIMAL or my_solver.status == pywraplp.Solver.FEASIBLE:            
             my_solver.resolve_final_path()
 
             print('A Solution was found')
@@ -201,17 +201,6 @@ elif args[0] == "solve":
                 print("Final Route Configuration succesfully created at:")
                 print(routesPath + options.output)
         
-        elif my_solver.status == pywraplp.Solver.FEASIBLE:
-            if  my_solver.status == pywraplp.Solver.OPTIMAL:            
-                my_solver.resolve_final_path()
-
-                print('An aproximation Solution was found')
-                print('Objective value:', round(my_solver.objective_value, 1))
-
-            #Checks if output filename is empty
-            #If it is, simply prints the final route
-                if (options.output == ""):
-                    print('Final Route Configuration: ', my_solver.final_path)
         else:
             print('No optiomal solution was found.')
 

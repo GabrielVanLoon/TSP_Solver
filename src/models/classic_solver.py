@@ -14,18 +14,16 @@ class ClassicSolver:
         self.status = None
         self.objective_value = None
         self.final_path = None
-
+        # Other Configurations
+        self.initial_solution = initial_solution
+        self.timeout = timeout
+        self.verbose = verbose
         # Execute initializations
         self.init_solver()
         self.init_variables()
         self.init_constraints()
         self.init_goal()
-
-        # Other Configurations
-        self.initial_solution = initial_solution
-        self.timeout = timeout
-        self.verbose = verbose
-
+ 
     def init_solver(self):
         self.solver = pywraplp.Solver.CreateSolver('SCIP')
           
@@ -40,6 +38,18 @@ class ClassicSolver:
                     self.x[position_from, position_to] = self.solver.IntVar(0, 1, '')
                 else:
                     self.x[position_from, position_to] = self.solver.IntVar(0, 0, '')
+
+        # Inicialize variables using Hint
+        if self.initial_solution is not None:
+            vet_x    = []
+            vet_init = []
+            for i in range(self.n_nodes):
+                for j in range(self.n_nodes):
+                    vet_x.append(self.x[i,j])
+                    vet_init.append(self.initial_solution[i][j])
+            
+            self.solver.SetHint(vet_x, vet_init)
+           
 
     def init_constraints(self):
         if self.solver is None:
@@ -70,7 +80,7 @@ class ClassicSolver:
             return
 
         if self.timeout is not None:
-            print("Starting Solver, time limit setted to ", self.timeout, "minute")
+            print("Starting Solver, time limit setted to", self.timeout, "minutes")
             self.solver.SetTimeLimit(1000*60*self.timeout)
 
         if self.verbose:
