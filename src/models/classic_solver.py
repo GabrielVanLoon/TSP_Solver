@@ -67,6 +67,8 @@ class ClassicSolver:
             return
 
         # Execute the model and save the results
+        # TODO: 
+        self.solver.SetTimeLimit(640000)
         self.status = self.solver.Solve()
         self.objective_value =  self.solver.Objective().Value()
 

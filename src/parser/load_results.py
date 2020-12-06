@@ -9,7 +9,9 @@ from models.lazy_cutting_plane import LazyCuttingPlane as dfj2
 from models.dl import DLSolver as dl
 from models.routing_tsp import DefaultSolver as default
 
-def results_to_logdata(results_filename):
+DIR = '../../benchmarks/results/'
+
+def load_results(results_filename):
     '''
     Carrega o arquivo de resultados em  dicionarios
 
@@ -31,7 +33,7 @@ def results_to_logdata(results_filename):
     dfj_name = dfj.__name__;
     dfj2_name = dfj2.__name__;
     dl_name = dl.__name__;
-    default_name = default.__name__;
+    # default_name = default.__name__;
 
     # Tempo gerado por execução
     logtime_data = {
@@ -40,13 +42,25 @@ def results_to_logdata(results_filename):
         mtz_name : [],
         dfj_name : [],
         dl_name: [],
-        default_name: [],
+        # default_name: [],
     }
+
+    # Tempo gerado por execução
+    logvalue_data = {
+        cs_name : [],
+        dfj2_name : [],
+        mtz_name : [],
+        dfj_name : [],
+        dl_name: [],
+        # default_name: [],
+    }
+
 
     horizontal =  []
 
-    with open(results_filename, 'r', encoding='utf-8') as results_file:
+    with open(DIR + results_filename, 'r', encoding='utf-8') as results_file:
         time_reference = 'TIME_SECTION\n'
+        value_reference = 'VALUES_SECTION\n'
         end_reference = 'EOF\n'
 
         reader = results_file.readlines()
@@ -69,9 +83,15 @@ def results_to_logdata(results_filename):
         end = start + dim
         for row in reader[start:end]:
             line = row.strip().split()
-            logtime_data[line[0][:-1]] = [int(x) for x in line[1:] if x != '']
+            logtime_data[line[0][:-1]] = [float(x) for x in line[1:] if x != '']
 
-    return horizontal, logtime_data
+        start = reader.index(value_reference) + 1
+        end = start + dim
+        for row in reader[start:end]:
+            line = row.strip().split()
+            logvalue_data[line[0][:-1]] = [float(x) for x in line[1:] if x != '']
+
+    return horizontal, logtime_data, logvalue_data
 
 if __name__ == "__main__":
     results_to_logdata('../../benchmarks/results/libra6.txt')

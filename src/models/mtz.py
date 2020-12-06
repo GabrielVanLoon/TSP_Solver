@@ -23,7 +23,6 @@ class MTZSolver(ClassicSolver):
 
     def init_constraints(self):
         super().init_constraints()
-
         # Add constrains MTZ to sub-tour elimination
         for i in range(1, self.n_nodes):
             for j in range(1, self.n_nodes):
