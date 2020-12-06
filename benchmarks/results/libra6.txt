@@ -1,7 +1,0 @@
-NAME: <_io.TextIOWrapper name='../../benchmarks/results/libra6.txt' mode='w' encoding='UTF-8'>
-COMMENT: Just test
-TYPE: txt
-DIMENSION: 6
-LAST_RUN: 1HORIZONTAL_SECTION: 1
-TIME_SECTION
-mtz: 2
