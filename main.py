@@ -186,7 +186,12 @@ elif args[0] == "solve":
         if  my_solver.status == pywraplp.Solver.OPTIMAL or my_solver.status == pywraplp.Solver.FEASIBLE:            
             my_solver.resolve_final_path()
 
-            print('A Solution was found')
+
+            if my_solver.status == pywraplp.Solver.OPTIMAL
+                print('A Solution was found')
+            else
+                print('An Otimal Solution was found, yay!')
+
             print('Objective value:', round(my_solver.objective_value, 1))
 
             #Checks if output filename is empty
@@ -202,7 +207,7 @@ elif args[0] == "solve":
                 print(routesPath + options.output)
         
         else:
-            print('No optiomal solution was found.')
+            print('No solution was found. :(')
 
 #Plots the found solution
 elif(args[0] == "plot"):
