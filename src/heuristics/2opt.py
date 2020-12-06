@@ -20,7 +20,17 @@ from math import inf
 """
 
 class K_opt:
+
     def __init__(self, dist_matrix):
+        '''
+        Classe construtora a qual comeca inicializando
+        a matriz de distancia, o custo (infinito) e o caminho (ainda vazio)
+
+        Parametros
+        ----------
+            dist_matrix : np.array
+                Matriz de distancias
+        '''
         self.dist_matrix = dist_matrix
         self.cost  = inf
         self.path  = []
@@ -175,51 +185,25 @@ if __name__=="__main__":
                 cost_matrix.append([int(k) for k in line.strip().split('\t')])
             return np.array(cost_matrix)
 
-    # models = ['djibouti38', 'western_sahara29', 'qatar194', 'uruguay734']
-    models = ['djibouti38', 'western_sahara29']
-
+    models = ['djibouti38', 'western_sahara29', 'qatar194', 'uruguay734']
+    
     for m in models:
         time1 = time.time()
         opt   = K_opt(load_matrix(m))
         _, cost = opt.all_solutions()
         time2 = time.time()
-        # opt.two_opt() 
 
         print(m)
         print(cost)
         print('{:.2f} seg.'.format(time2 - time1))
 
-
         start_index = opt.path.index(0)
         rotate_path = [] + opt.path[start_index:] + opt.path[:start_index]
 
-        # print(opt.path[start_index:] + opt.path[0:start_index])
-
         for v in rotate_path:
             print(v, end=" ")
-
-
         
+        print(" ")
+        print("fim experimento ---")
 
 
-# opt = K_opt(load('uruguay734'))
-# np.fill_diagonal(opt.dist_matrix, 0)
-# print(opt.dist_matrix)
-# minimum = inf
-# best = 0
-# for i in range(734):
-#     opt.initial_solution(node_init=i)
-#     if minimum > opt.total_cost():
-#         minimum = opt.total_cost()
-#         best = i
-
-# import time
-# time1 = time.time()    
-# print(f'Best: {best} and Length: {opt.initial_solution(node_init=best)}')
-# print(f'Tempo gasto: {time.time()-time1}', end='\n')
-# print(opt.total_cost())
-# print(opt.two_opt(iteration=100))
-# print(opt.total_cost())
-# print(len(opt.path))
-# print(len(set(opt.path)))
-# print(opt.bfs())
