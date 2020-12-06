@@ -61,6 +61,31 @@ Esse comando resolve o problema utilizando o **método de Cutting Planes.** Ao t
 ```
 Esse comando resolve o problema utilizando o **método de MTZ.** Ao terminar, imprime a configuração final da rota na tela.
 
+```bash=
+./main.py solve -i libra6.txt -s dl
+```
+Esse comando resolve o problema utilizando o **método de DL.** Ao terminar, imprime a configuração final da rota na tela.
+
+```bash=
+./main.py solve -i libra6.txt -s gg
+```
+Esse comando resolve o problema utilizando o **método de GG.** Ao terminar, imprime a configuração final da rota na tela.
+
+```bash=
+./main.py solve -i libra6.txt -H -s gg
+```
+Esse comando utiliza uma heurística (2-opt) para encontrar um valor inicial, e então resolve o problema utilizando o **método de GG.** Ao terminar, imprime a configuração final da rota na tela.
+
+```bash=
+./main.py solve -i libra6.txt -t 1 -s gg
+```
+Esse comando define um tempo limite para a execução (1 minuto, nesse caso), e então resolve o problema utilizando o **método de GG.** Ao terminar, imprime a configuração final da rota na tela.
+
+```bash=
+./main.py solve -i libra6.txt -V -s gg
+```
+Esse comando resolve o problema utilizando o **método de GG,** e mostra o registro do solver durante o método de busca. Ao terminar, imprime a configuração final da rota na tela.
+
 ### Action plot
 ```bash=
 ./main.py plot -i libra6.tsp -o libra6.png
