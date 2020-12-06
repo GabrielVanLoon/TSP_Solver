@@ -18,6 +18,9 @@ class ClassicSolver:
         self.initial_solution = initial_solution
         self.timeout = timeout
         self.verbose = verbose
+        # Hint Configurations
+        self.vet_vars = []
+        self.vet_init = []
         # Execute initializations
         self.init_solver()
         self.init_variables()
@@ -41,15 +44,12 @@ class ClassicSolver:
 
         # Inicialize variables using Hint
         if self.initial_solution is not None:
-            vet_x    = []
-            vet_init = []
+            self.vet_vars = []
+            self.vet_init = []
             for i in range(self.n_nodes):
                 for j in range(self.n_nodes):
-                    vet_x.append(self.x[i,j])
-                    vet_init.append(self.initial_solution[i][j])
-            
-            self.solver.SetHint(vet_x, vet_init)
-           
+                    self.vet_vars.append(self.x[i,j])
+                    self.vet_init.append(self.initial_solution[i][j])
 
     def init_constraints(self):
         if self.solver is None:
@@ -85,6 +85,10 @@ class ClassicSolver:
 
         if self.verbose:
             self.solver.EnableOutput()
+
+        # Inicialize variables using Hint
+        if self.initial_solution is not None:
+            self.solver.SetHint(self.vet_vars, self.vet_init)
 
         self.status = self.solver.Solve()
         self.objective_value =  self.solver.Objective().Value()

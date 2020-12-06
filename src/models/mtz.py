@@ -21,6 +21,19 @@ class MTZSolver(ClassicSolver):
         for i in range(self.n_nodes):
             self.u[i] = self.solver.IntVar(0, self.n_nodes, '')
 
+        # Inicialize variables using Hint
+        if self.initial_solution is not None:
+            i = 0
+            for it in range(self.n_nodes):
+                for j in range(self.n_nodes):
+                    if self.initial_solution[i][j] == 1:
+                        # print("Solução {} -> {}, u{} = {}".format(i,j,i,it))
+                        self.vet_vars.append(self.u[i])
+                        self.vet_init.append(it)
+                        i = j
+                        break
+
+
     def init_constraints(self):
         super().init_constraints()
         # Add constrains MTZ to sub-tour elimination
