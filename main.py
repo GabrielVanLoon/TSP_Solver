@@ -187,9 +187,9 @@ elif args[0] == "solve":
             my_solver.resolve_final_path()
 
 
-            if my_solver.status == pywraplp.Solver.OPTIMAL
+            if my_solver.status == pywraplp.Solver.OPTIMAL:
                 print('A Solution was found')
-            else
+            else:
                 print('An Otimal Solution was found, yay!')
 
             print('Objective value:', round(my_solver.objective_value, 1))
