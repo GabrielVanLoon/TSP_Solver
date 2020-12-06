@@ -125,8 +125,8 @@ class K_opt:
 
         cost = 0
         for node in range(0, len(self.path) - 1):
-            cost += self.dist_matrix[self.path[node], self.path[node + 1]]
-        cost += self.dist_matrix[self.path[-1], self.path[0]]
+            cost += self.dist_matrix[self.path[node]][self.path[node + 1]]
+        cost += self.dist_matrix[self.path[-1]][self.path[0]]
         return cost
     
     def edge_cost(self, node1, node2, node3, node4):
@@ -150,7 +150,7 @@ class K_opt:
             int 
             Retorna o seguinte valor das arestas: (aresta_atual1 + aresta_atual2) - (aresta_nova1 + aresta_nova2)
         '''
-        return (self.dist_matrix[node1, node2] + self.dist_matrix[node3, node4]) - (self.dist_matrix[node1, node3] + self.dist_matrix[node2, node4])
+        return (self.dist_matrix[node1][node2] + self.dist_matrix[node3][node4]) - (self.dist_matrix[node1][node3] + self.dist_matrix[node2][node4])
 
     def two_opt(self, iteration=10):
         '''

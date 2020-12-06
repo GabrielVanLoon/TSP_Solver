@@ -19,6 +19,8 @@ from src.models.lazy_cutting_plane import LazyCuttingPlane
 from src.models.dl import DLSolver
 from src.models.gg import GGSolver
 
+from src.heuristics.two_opt import K_opt
+
 def checkFilenames(options, inputFlag=True, outputFlag=True):
     '''
     Checks if user passed the necessary filenames
@@ -67,6 +69,16 @@ if __name__=="__main__":
         action="store_true", 
         help="use this flag to...")
 
+    parser.add_option("-H", "--heuristic", dest="heuristic", 
+        action="store_true", 
+        help="use this flag to use heuristics to find the initial value")
+    parser.add_option("-t", "--timeout", dest="timeout", 
+        default=None, type="int", 
+        help="set a time limit to the solver")
+    parser.add_option("-V", "--verbose", dest="verbose", 
+        action="store_true", 
+        help="show the solver logs during the search method")
+
 (options, args) = parser.parse_args()
 
 #Paths to open and create files
@@ -114,6 +126,7 @@ elif args[0] == "dist":
 #Solve problem with chosen method
 #If no method is chosen, use classic_solver method
 elif args[0] == "solve":
+
     #Checks if input filename is not an empty string
     if(not checkFilenames(options, outputFlag=False)):
         print("Input filename is necessary")
@@ -130,25 +143,44 @@ elif args[0] == "solve":
         #Gets data from distances .txt file
         test_data = helper.load_data(distPath + options.input)
 
+        #Gets solver configurations
+        (timeout, verbose, initial_solution) = (None, False, None) 
+
+        if options.timeout:
+            timeout = options.timeout
+        if options.verbose:
+            verbose = options.verbose
+
+        #If Heuristics is setted then uses two_opt
+        if options.heuristic:
+            print("Finding Initial Solution with Heuristics...")
+            opt = K_opt(test_data)
+            # opt.all_solutions()
+            opt.initial_solution()
+            opt.two_opt(iteration=2)
+            initial_solution = opt.generate_initial_cicle()
+            print("Initial Solution Found with Lower Bound =", opt.cost)
+
         #Checks chosen solving method
         if(options.solver == "dfj"):
             print("Trying to solve problem with Cutting Plane Method...")
-            my_solver = CuttingPlane(test_data)
+            my_solver = CuttingPlane(test_data, initial_solution=initial_solution, timeout=timeout, verbose=verbose)
         elif(options.solver == "mtz"):
             print("Trying to solve problem with MTZ Solver Method...")
-            my_solver = MTZSolver(test_data)
+            my_solver = MTZSolver(test_data, initial_solution=initial_solution, timeout=timeout, verbose=verbose)
         elif(options.solver == "dfj2"):
             print("Trying to solve problem with DFJ version 2.0 Method...")
-            my_solver = LazyCuttingPlane(test_data)
+            my_solver = LazyCuttingPlane(test_data, initial_solution=initial_solution, timeout=timeout, verbose=verbose)
         elif(options.solver == "dl"):
             print("Trying to solve problem with DL version Method...")
-            my_solver = DLSolver(test_data)
+            my_solver = DLSolver(test_data, initial_solution=initial_solution, timeout=timeout, verbose=verbose)
         elif(options.solver == "gg"):
             print("Trying to solve problem with GG version Method...")
-            my_solver = GGSolver(test_data)
+            my_solver = GGSolver(test_data, initial_solution=initial_solution, timeout=timeout, verbose=verbose)
         else:
             print("Trying to solve problem with Classic Solver Method...")
-            my_solver = ClassicSolver(test_data)
+            my_solver = ClassicSolver(test_data, initial_solution=initial_solution, timeout=timeout, verbose=verbose)
+
         my_solver.solve()
 
         if  my_solver.status == pywraplp.Solver.OPTIMAL:            

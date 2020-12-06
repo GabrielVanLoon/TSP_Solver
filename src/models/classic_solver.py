@@ -2,7 +2,7 @@ from __future__ import print_function
 from ortools.linear_solver import pywraplp
 
 class ClassicSolver:
-    def __init__(self, distance_matrix):
+    def __init__(self, distance_matrix, initial_solution=None, timeout=None, verbose=False):
         # Variables
         self.distance = distance_matrix
         self.n_nodes = len(distance_matrix)
@@ -21,11 +21,14 @@ class ClassicSolver:
         self.init_constraints()
         self.init_goal()
 
-    #
+        # Other Configurations
+        self.initial_solution = initial_solution
+        self.timeout = timeout
+        self.verbose = verbose
+
     def init_solver(self):
         self.solver = pywraplp.Solver.CreateSolver('SCIP')
           
-
     def init_variables(self):
         if self.solver is None:
             return
@@ -66,9 +69,13 @@ class ClassicSolver:
         if self.solver is None:
             return
 
-        # Execute the model and save the results
-        # TODO: 
-        self.solver.SetTimeLimit(640000)
+        if self.timeout is not None:
+            print("Starting Solver, time limit setted to ", self.timeout, "minute")
+            self.solver.SetTimeLimit(1000*60*self.timeout)
+
+        if self.verbose:
+            self.solver.EnableOutput()
+
         self.status = self.solver.Solve()
         self.objective_value =  self.solver.Objective().Value()
 

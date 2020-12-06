@@ -8,8 +8,8 @@ import helper
 
 # Sub-tour elimination(MTZ)
 class DLSolver(ClassicSolver):
-    def __init__(self, distance_matrix):
-        super().__init__(distance_matrix)
+    def __init__(self, distance_matrix, initial_solution=None, timeout=None, verbose=False):
+        super().__init__(distance_matrix, initial_solution, timeout, verbose)
         # New Variables
         self.u = {}
 
