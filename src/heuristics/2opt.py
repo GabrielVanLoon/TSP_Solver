@@ -61,6 +61,7 @@ class K_opt:
             if it == (len(self.dist_matrix)-1):
                 self.edges[current_node][node_init] = 1
                 self.edges[node_init][current_node] = 1
+                self.path.append(current_node)
             else:
                 for viz in range(len(self.dist_matrix)):
                     if (current_node == viz) or (visited[viz] == 1):
@@ -69,122 +70,64 @@ class K_opt:
                         min_dist = self.dist_matrix[current_node][viz]
                         min_viz  = viz
                 
-                self.path.append([current_node, min_viz])
+                self.path.append(current_node)
 
                 visited[min_viz] = 1
                 self.edges[current_node][min_viz] = 1
                 self.edges[min_viz][current_node] = 1
                 current_node = min_viz
-                
         
         return self.path
-
-    def edge_cost(self, edgeU, edgeV):
-        return self.dist_matrix[edgeU[0], edgeU[1]] + self.dist_matrix[edgeV[0], edgeV[1]] 
 
     def total_cost(self):
         cost = 0
-        for edge in self.path:
-            cost += self.dist_matrix[edge[0], edge[1]]
+        for node in range(0, len(self.path) - 1):
+            cost += self.dist_matrix[self.path[node], self.path[node + 1]]
+        cost += self.dist_matrix[self.path[-1], self.path[0]]
         return cost
+
+    def cost_change(self, n1, n2, n3, n4):
+        return self.dist_matrix[n1, n2] + self.dist_matrix[n3, n4] - (self.dist_matrix[n1, n3] + self.dist_matrix[n2, n4])
+
+
+    def two_opt(self, iteration=10):
+
+        k = 0
+        best = self.path
+        improved = True
+        while improved and k < iteration:
+            improved = False
+            for i in range(1, len(self.path) - 2):
+                for j in range(i + 2, len(self.path)):
+                    if self.cost_change(best[i-1], best[i], best[j-1], best[j]) > 0:
+                        best[i:j] = best[j - 1:i - 1:-1]
+                        improved = True
+            self.path = best
+            print(f'Iteration: {k}', end='\n')
+            k += 1
+        return best
+
+
         
-    def two_opt(self, iteration=5):
-
-        if self.path == []:
-            self.initial_solution()
-
-        self.cost = self.total_cost()
-        
-        for it in range(0, iteration):
-
-            for e1 in range(len(self.path)):
-                for e2 in range(len(self.path)):
-                    # Impede swaps que geram edges de um vertice para ele mesmo
-                    if self.path[e1][0] == self.path[e2][0] or self.path[e1][1] == self.path[e2][1]:
-                        continue
-                    
-                    cur_sum = self.edge_cost([self.path[e1][0], self.path[e1][1]], [self.path[e2][0], self.path[e2][1]])
-                    swap_sum = self.edge_cost([self.path[e1][0], self.path[e2][0]], [self.path[e1][1], self.path[e2][1]])
-
-                    if swap_sum < cur_sum:
-                        # Remove as arestas antigas
-                        self.edges[self.path[e1][0]][self.path[e1][1]] = 0
-                        self.edges[self.path[e1][1]][self.path[e1][0]] = 0
-                        self.edges[self.path[e2][0]][self.path[e2][1]] = 0
-                        self.edges[self.path[e2][1]][self.path[e2][0]] = 0
-
-                        # Adiciona as arestas novas
-                        self.edges[self.path[e1][0]][self.path[e2][0]] = 1
-                        self.edges[self.path[e2][0]][self.path[e1][0]] = 1
-                        self.edges[self.path[e1][1]][self.path[e2][1]] = 1
-                        self.edges[self.path[e2][1]][self.path[e1][1]] = 1
-
-                        # Adiciona as novas arestas
-                        self.path.append([self.path[e1][0], self.path[e2][0]])
-                        self.path.append([self.path[e1][1], self.path[e2][1]])
-
-                        # Remove e1 e e2 do vetor de arestas
-                        del self.path[e1]
-                        del self.path[e2]
-
-            # Se não é possível gerar mais melhorias para as iterações
-            new_cost = self.total_cost()
-            if new_cost == self.cost:
-                break
-            self.cost = new_cost
-
-        return self.path
-
-
-        # for it in range(0, iteration):
-        #     for out1, in1 in self.nodes.items():
-        #         for out2, in2 in self.nodes.items():
-        #             if out1 == out2:
-        #                 continue
-                    
-        #             cur_sum = edge_cost([out1, in1], [out2, in2])
-        #             swap_sum = edge_cost([out1, in2], [out2, in1])
-
-        #             if swap_sum < cur_sum:
-        #                 self.nodes[out1] = out2
-        #                 self.nodes[out2] = in1
-
-    # it = 0
-    #     node_in = 0
-
-    #     while it < iteration:
-
-    #         edge = [node_in, self.nodes[node_in]]
-
-    #         # Choose an edge to replace
-    #         for node_in in self.nodes.keys():
-    #             if node_in != edge[0] and node_in != edge[1] and self.nodes[node_in] != edge[0]:
-    #                 cur_cost = self.edge_cost(edge, [node_in, self.nodes[node_in]])
-    #                 new_cost = self.edge_cost([[edge[0], node_in]], [edge[1], self.nodes[node_in]])
-    #                 if new_cost < cur_cost:
-    #                     self.cost = self.cost - (cur_cost - new_cost)
-    #                     x = edge[1]
-    #                     y = self.nodes[x]
-    #                     while y != self.nodes[node_in]:
-    #                         x = y
-
-
-
-                        
-    #         it += 1
-
-
-            
-# time1 = time.time()
 
 # opt = K_opt(load('uruguay734'))
-# print(opt.initial_solution())
-# print(opt.total_cost())
-# print(f'{time.time()-time1} segundos')
+# np.fill_diagonal(opt.dist_matrix, 0)
+# print(opt.dist_matrix)
+# minimum = inf
+# best = 0
+# for i in range(734):
+#     opt.initial_solution(node_init=i)
+#     if minimum > opt.total_cost():
+#         minimum = opt.total_cost()
+#         best = i
 
-opt = K_opt(load('orion15'))
-print(opt.initial_solution())
-print(opt.total_cost())
-print(opt.two_opt())
-print(opt.total_cost())
-# opt.two_opt()
+# import time
+# time1 = time.time()    
+# print(f'Best: {best} and Length: {opt.initial_solution(node_init=best)}')
+# print(f'Tempo gasto: {time.time()-time1}', end='\n')
+# print(opt.total_cost())
+# print(opt.two_opt(iteration=100))
+# print(opt.total_cost())
+# print(len(opt.path))
+# print(len(set(opt.path)))
+# print(opt.bfs())
