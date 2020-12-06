@@ -79,7 +79,16 @@ class K_opt:
     
     def all_solutions(self):
         '''
-        Verifica qual eh o melho
+        Verifica qual eh a melhor solucao inicial utilizando o
+        Nearest Neighborhood. Para isso eh testado todos os nos
+        como iniciais
+
+        Retorno
+        -------
+            minimum_node : int
+                id do melhor no inicial
+            minimum_dist : int
+                menor distancia
         '''
         
         minimum_dist = inf
@@ -162,19 +171,30 @@ class K_opt:
         '''
 
         k = 0
-        best = self.path
+        enhanced_path = self.path
         improved = True
         while improved and k < iteration:
             improved = False
             for i in range(1, len(self.path) - 2):
                 for j in range(i + 2,    len(self.path)):
-                    if self.edge_cost(best[i-1], best[i], best[j-1], best[j]) > 0:
-                        best[i:j] = best[j - 1:i - 1:-1]
+                    if self.edge_cost(enhanced_path[i-1], enhanced_path[i], enhanced_path[j-1], enhanced_path[j]) > 0:
+                        enhanced_path[i:j] = enhanced_path[j - 1:i - 1:-1]
                         improved = True
-            self.path = best
+            self.path = enhanced_path
             k += 1
-        return self.path
+        
+        self.cost = self.total_cost()
 
+        return self.path
+    
+    def generate_initial_cicle(self):
+
+        self.edges = np.zeros((len(self.dist_matrix), len(self.dist_matrix)))
+        for node in range(len(self.path) - 1):
+            self.edges[self.path[node], self.path[node + 1]] = 1
+        self.edges[self.path[-1], self.path[0]] = 1
+
+        return self.edges
 
 if __name__=="__main__":
 
@@ -185,8 +205,12 @@ if __name__=="__main__":
                 cost_matrix.append([int(k) for k in line.strip().split('\t')])
             return np.array(cost_matrix)
 
-    models = ['djibouti38', 'western_sahara29', 'qatar194', 'uruguay734']
+    # models = ['djibouti38', 'western_sahara29', 'qatar194', 'uruguay734']
+
+    # models = ['djibouti38', 'western_sahara29']
     
+    models = ['libra6', 'orion15']
+
     for m in models:
         time1 = time.time()
         opt   = K_opt(load_matrix(m))
@@ -202,8 +226,9 @@ if __name__=="__main__":
 
         for v in rotate_path:
             print(v, end=" ")
-        
+
         print(" ")
         print("fim experimento ---")
+
 
 
