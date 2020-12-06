@@ -7,6 +7,7 @@ from models.cutting_plane  import CuttingPlane  as dfj
 from models.mtz            import MTZSolver     as mtz
 from models.lazy_cutting_plane import LazyCuttingPlane as dfj2
 from models.dl import DLSolver as dl
+from models.gg import GGSolver as gg
 from models.routing_tsp import DefaultSolver as default
 
 DIR = '../../benchmarks/results/'
@@ -28,29 +29,26 @@ def load_results(results_filename):
 
     '''
 
-    cs_name = cs.__name__;
+    # cs_name = cs.__name__;
     mtz_name = mtz.__name__;
-    dfj_name = dfj.__name__;
-    dfj2_name = dfj2.__name__;
+    # dfj_name = dfj.__name__;
+    # dfj2_name = dfj2.__name__;
     dl_name = dl.__name__;
+    gg_name = gg.__name__;
     # default_name = default.__name__;
 
     # Tempo gerado por execução
     logtime_data = {
-        cs_name : [],
-        dfj2_name : [],
+        gg_name: [],
         mtz_name : [],
-        dfj_name : [],
         dl_name: [],
         # default_name: [],
     }
 
     # Tempo gerado por execução
     logvalue_data = {
-        cs_name : [],
-        dfj2_name : [],
+        gg_name: [],
         mtz_name : [],
-        dfj_name : [],
         dl_name: [],
         # default_name: [],
     }
