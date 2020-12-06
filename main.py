@@ -213,6 +213,8 @@ elif(args[0] == "all"):
             os.system("./main.py solve -i {0}.txt -o {0}.csv -s mtz -C {0}.csv".format(options.input))
         elif(options.solver == "dfj2"):
             os.system("./main.py solve -i {0}.txt -o {0}.csv -s dfj2 -C {0}.csv".format(options.input))
+        elif(options.solver == "dl"):
+            os.system("./main.py solve -i {0}.txt -o {0}.csv -s dfj2 -C {0}.csv".format(options.input))
         else:
             os.system("./main.py solve -i {0}.txt -o {0}.csv -C {0}.csv".format(options.input))
         
@@ -220,3 +222,6 @@ elif(args[0] == "all"):
 
 else:
     print("Invalid argument")
+
+# TODO: exe com limitantas e step maior
+# TODO: plotar auto
