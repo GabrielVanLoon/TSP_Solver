@@ -17,6 +17,6 @@ def load_data(filename):
     cost_matrix = list()
     
     for line in lines:
-        cost_matrix.append([int(x) for x in line.strip().split('\t')])
+        cost_matrix.append([float(x) for x in line.strip().split('\t')])
 
     return cost_matrix

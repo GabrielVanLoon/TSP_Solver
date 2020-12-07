@@ -5,7 +5,7 @@ from   math  import sqrt, ceil
 def calc_dist(a, b):
     return sqrt((a['x'] - b['x'])**2 + (a['y'] - b['y'])**2)
 
-def make_matrix_dist(csv_filename, txt_filename, num_diag = -1, encoder = 'utf-8'):
+def make_matrix_dist(csv_filename, txt_filename, num_diag = -1.0, encoder = 'utf-8'):
 
     '''
     Cria um arquivo txt com a matriz de distancias entre as coordenadas
@@ -36,11 +36,11 @@ def make_matrix_dist(csv_filename, txt_filename, num_diag = -1, encoder = 'utf-8
             for i in range(n_coord):
                 matrix[i, i] = num_diag
                 for j in range(i + 1, n_coord):
-                    dist = ceil(calc_dist(coord[i], coord[j]))
+                    dist = calc_dist(coord[i], coord[j])
                     matrix[i, j] = dist
                     matrix[j, i] = dist
             
             for i in range(n_coord):
                 for j in range(n_coord):    
-                    txt_file.write(f'{int(matrix[i, j])}\t')
+                    txt_file.write(f'{matrix[i, j]}\t')
                 txt_file.write(f'\n')

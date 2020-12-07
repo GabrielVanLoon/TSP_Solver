@@ -46,6 +46,6 @@ def tsp_to_csv(tsp_filename, csv_filename):
 
             for row in reader[start:end]:
                 line = row.strip().split()
-                writer.writerow({'id': int(line[0]), 'x': ceil(float(line[1])), 'y': ceil(float(line[2]))})
+                writer.writerow({'id': int(line[0]), 'x': float(line[1]), 'y': float(line[2])})
 
         return True
