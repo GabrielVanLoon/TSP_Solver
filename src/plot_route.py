@@ -44,7 +44,7 @@ def plot(route_filename, img_filename, background=False, background_img='./image
                       '--', lw = 3, color = line_color)
 
         for row in reader:
-            plt.plot(float(row['x_i']), float(row['y_i']), marker = '*', ms = 30, color = 'red')
+            plt.plot(float(row['x_i']), float(row['y_i']), marker = '*', ms = 5, color = 'red')
         
         plt.axis('off')
 

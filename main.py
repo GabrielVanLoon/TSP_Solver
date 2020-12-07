@@ -193,6 +193,9 @@ elif args[0] == "solve":
                 print('An Otimal Solution was found, yay!')
 
             print('Objective value:', round(my_solver.objective_value, 1))
+            print('Problem solved in %d iterations' % my_solver.solver.iterations())
+            print('Problem solved in %d iterations' % my_solver.solver.nodes())
+
 
             #Checks if output filename is empty
             #If it is, simply prints the final route
@@ -227,24 +230,29 @@ elif(args[0] == "plot"):
 #Executes in order the commands needed to solve and plot
 #the solution of the problem with just the raw file
 elif(args[0] == "all"):
-    print("REAL SOLVER" + options.solver)
     if(not checkFilenames(options, outputFlag=False)):
         print("Input filename is necessary")
     else:
         os.system("./main.py tsp -i {0}.tsp -o {0}.csv".format(options.input))
         os.system("./main.py dist -i {0}.csv -o {0}.txt".format(options.input))
-        print("REAL SOLVER" + options.solver)
+
+        heuristic_flag = ""
+        if options.heuristic:
+            heuristic_flag += " -H "
+
+        if options.verbose:
+            heuristic_flag += " -V "
+
         if(options.solver == "dfj"):
-            os.system("./main.py solve -i {0}.txt -o {0}.csv -s dfj -C {0}.csv".format(options.input))
+            os.system("./main.py solve -i {0}.txt -o {0}.csv -s dfj -t 15 -C {0}.csv {1}".format(options.input, heuristic_flag))
         elif(options.solver == "mtz"):
-            os.system("./main.py solve -i {0}.txt -o {0}.csv -s mtz -C {0}.csv".format(options.input))
+            os.system("./main.py solve -i {0}.txt -o {0}.csv -s mtz -t 15 -C {0}.csv {1}".format(options.input, heuristic_flag))
         elif(options.solver == "dfj2"):
-            os.system("./main.py solve -i {0}.txt -o {0}.csv -s dfj2 -C {0}.csv".format(options.input))
+            os.system("./main.py solve -i {0}.txt -o {0}.csv -s dfj2 -t 15 -C {0}.csv {1}".format(options.input, heuristic_flag))
         elif(options.solver == "dl"):
-            print("SOLVER: DL")
-            os.system("./main.py solve -i {0}.txt -o {0}.csv -s dl -C {0}.csv".format(options.input))
+            os.system("./main.py solve -i {0}.txt -o {0}.csv -s dl -t 15 -C {0}.csv {1}".format(options.input, heuristic_flag))
         else:
-            os.system("./main.py solve -i {0}.txt -o {0}.csv -s dl -C {0}.csv".format(options.input))
+            os.system("./main.py solve -i {0}.txt -o {0}.csv -s dl -t 15 -C {0}.csv {1}".format(options.input, heuristic_flag))
         
         os.system("./main.py plot -i {0}.csv -o {0}.png".format(options.input))
 
