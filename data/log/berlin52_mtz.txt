@@ -1,0 +1,62 @@
+presolving:
+(round 1, fast)       53 del vars, 0 del conss, 0 add conss, 0 chg bounds, 0 chg sides, 0 chg coeffs, 0 upgd conss, 0 impls, 104 clqs
+(round 2, exhaustive) 53 del vars, 0 del conss, 0 add conss, 0 chg bounds, 0 chg sides, 0 chg coeffs, 104 upgd conss, 0 impls, 104 clqs
+   (0.0s) probing: 51/2652 (1.9%) - 0 fixings, 0 aggregations, 0 implications, 0 bound changes
+   (0.0s) probing aborted: 50/50 successive totally useless probings
+   Deactivated symmetry handling methods, since SCIP was built without symmetry detector (SYM=none).
+presolving (3 rounds: 3 fast, 2 medium, 2 exhaustive):
+ 53 deleted vars, 0 deleted constraints, 0 added constraints, 0 tightened bounds, 0 added holes, 0 changed sides, 0 changed coefficients
+ 0 implications, 104 cliques
+presolved problem has 2703 variables (2652 bin, 0 int, 0 impl, 51 cont) and 2654 constraints
+    104 constraints of type <setppc>
+   2550 constraints of type <linear>
+Presolving Time: 0.00
+
+ time | node  | left  |LP iter|LP it/n|mem/heur|mdpt |vars |cons |rows |cuts |sepa|confs|strbr|  dualbound   | primalbound  |  gap   | compl. 
+p 0.0s|     1 |     0 |     2 |     - | vbounds|   0 |2703 |2660 |2654 |   0 |  0 |   5 |   0 | 0.000000e+00 | 2.226420e+04 |    Inf | unknown
+  0.0s|     1 |     0 |   185 |     - |    39M |   0 |2703 |2660 |2654 |   0 |  0 |   5 |   0 | 6.318826e+03 | 2.226420e+04 | 252.35%| unknown
+  0.0s|     1 |     0 |   218 |     - |    41M |   0 |2703 |2661 |2695 |  41 |  1 |   6 |   0 | 6.462051e+03 | 2.226420e+04 | 244.54%| unknown
+  0.0s|     1 |     0 |   264 |     - |    41M |   0 |2703 |2662 |2718 |  64 |  2 |   7 |   0 | 6.885711e+03 | 2.226420e+04 | 223.34%| unknown
+  0.0s|     1 |     0 |   284 |     - |    42M |   0 |2703 |2662 |2731 |  77 |  3 |   7 |   0 | 7.106133e+03 | 2.226420e+04 | 213.31%| unknown
+  0.0s|     1 |     0 |   286 |     - |    44M |   0 |2703 |2663 |2733 |  79 |  4 |   8 |   0 | 7.106133e+03 | 2.226420e+04 | 213.31%| unknown
+  0.0s|     1 |     0 |   313 |     - |    44M |   0 |2703 |2663 |2740 |  86 |  6 |   8 |   0 | 7.134033e+03 | 2.226420e+04 | 212.08%| unknown
+  0.0s|     1 |     0 |   325 |     - |    45M |   0 |2703 |2664 |2749 |  95 |  7 |   9 |   0 | 7.134033e+03 | 2.226420e+04 | 212.08%| unknown
+  1.0s|     1 |     0 |   331 |     - |    46M |   0 |2703 |2664 |2755 | 101 |  8 |   9 |   0 | 7.134033e+03 | 2.226420e+04 | 212.08%| unknown
+  1.0s|     1 |     0 |   334 |     - |    46M |   0 |2703 |2664 |2758 | 104 |  9 |   9 |   0 | 7.134033e+03 | 2.226420e+04 | 212.08%| unknown
+  1.0s|     1 |     0 |   350 |     - |    47M |   0 |2703 |2664 |2764 | 110 | 10 |   9 |   0 | 7.147451e+03 | 2.226420e+04 | 211.50%| unknown
+  1.0s|     1 |     0 |   380 |     - |    48M |   0 |2703 |2665 |2770 | 116 | 11 |  10 |   0 | 7.150387e+03 | 2.226420e+04 | 211.37%| unknown
+  1.0s|     1 |     0 |   407 |     - |    49M |   0 |2703 |2665 |2788 | 134 | 12 |  10 |   0 | 7.150464e+03 | 2.226420e+04 | 211.37%| unknown
+  1.0s|     1 |     0 |   422 |     - |    49M |   0 |2703 |2665 |2799 | 145 | 13 |  10 |   0 | 7.150481e+03 | 2.226420e+04 | 211.37%| unknown
+  1.0s|     1 |     0 |   443 |     - |    49M |   0 |2703 |2666 |2805 | 151 | 14 |  11 |   0 | 7.197410e+03 | 2.226420e+04 | 209.34%| unknown
+ time | node  | left  |LP iter|LP it/n|mem/heur|mdpt |vars |cons |rows |cuts |sepa|confs|strbr|  dualbound   | primalbound  |  gap   | compl. 
+  1.0s|     1 |     0 |   472 |     - |    49M |   0 |2703 |2667 |2808 | 154 | 15 |  12 |   0 | 7.401964e+03 | 2.226420e+04 | 200.79%| unknown
+  1.0s|     1 |     0 |   493 |     - |    50M |   0 |2703 |2668 |2818 | 164 | 16 |  13 |   0 | 7.504623e+03 | 2.226420e+04 | 196.67%| unknown
+  1.0s|     1 |     0 |   507 |     - |    50M |   0 |2703 |2669 |2781 | 171 | 17 |  14 |   0 | 7.505779e+03 | 2.226420e+04 | 196.63%| unknown
+  1.0s|     1 |     0 |   528 |     - |    50M |   0 |2703 |2670 |2786 | 176 | 18 |  15 |   0 | 7.505782e+03 | 2.226420e+04 | 196.63%| unknown
+  1.0s|     1 |     0 |   534 |     - |    51M |   0 |2703 |2671 |2792 | 182 | 19 |  16 |   0 | 7.505782e+03 | 2.226420e+04 | 196.63%| unknown
+  1.0s|     1 |     0 |   535 |     - |    51M |   0 |2703 |2672 |2793 | 183 | 20 |  17 |   0 | 7.505782e+03 | 2.226420e+04 | 196.63%| unknown
+  1.0s|     1 |     0 |   539 |     - |    51M |   0 |2703 |2673 |2797 | 187 | 21 |  18 |   0 | 7.505782e+03 | 2.226420e+04 | 196.63%| unknown
+  1.0s|     1 |     0 |   540 |     - |    51M |   0 |2703 |2674 |2798 | 188 | 22 |  19 |   0 | 7.505782e+03 | 2.226420e+04 | 196.63%| unknown
+  1.0s|     1 |     0 |   541 |     - |    51M |   0 |2703 |2674 |2753 | 189 | 23 |  19 |   0 | 7.505782e+03 | 2.226420e+04 | 196.63%| unknown
+d 3.0s|     1 |     0 |  4758 |     - |conflict|   0 |2703 |2684 |2753 |   0 | 25 |  29 |   0 | 7.505782e+03 | 1.474127e+04 |  96.40%| unknown
+L 3.0s|     1 |     0 |  4758 |     - |    alns|   0 |2703 |2684 |2753 | 189 | 25 |  29 |   0 | 7.505782e+03 | 1.294297e+04 |  72.44%| unknown
+  5.0s|     1 |     0 |  4758 |     - |    52M |   0 |2703 |2684 |2753 | 189 | 25 |  29 |   0 | 7.505782e+03 | 1.294297e+04 |  72.44%| unknown
+  5.0s|     1 |     0 |  4759 |     - |    52M |   0 |2703 |2685 |2754 | 190 | 26 |  30 |   0 | 7.505782e+03 | 1.294297e+04 |  72.44%| unknown
+  6.0s|     1 |     2 |  4759 |     - |    52M |   0 |2703 |2686 |2754 | 190 | 27 |  31 |  31 | 7.505801e+03 | 1.294297e+04 |  72.44%| unknown
+* 6.0s|     4 |     3 |  4849 |1436.3 |strongbr|   3 |2703 |2686 |2720 | 190 |  1 |  31 |  53 | 7.505801e+03 | 7.544366e+03 |   0.51%| unknown
+
+SCIP Status        : problem is solved [optimal solution found]
+Solving Time (sec) : 8.00
+Solving Nodes      : 15
+Primal Bound       : +7.54436590190409e+03 (4 solutions)
+Dual Bound         : +7.54436590190409e+03
+Gap                : 0.00 %
+Trying to solve problem with MTZ Solver Method...
+Starting Solver, time limit setted to 10 minutes
+Route:  [[0, 48], [1, 6], [2, 17], [3, 5], [4, 23], [5, 14], [6, 41], [7, 8], [8, 9], [9, 42], [10, 51], [11, 24], [12, 46], [13, 12], [14, 4], [15, 28], [16, 2], [17, 30], [18, 40], [19, 22], [20, 16], [21, 0], [22, 29], [23, 47], [24, 3], [25, 26], [26, 27], [27, 11], [28, 49], [29, 1], [30, 21], [31, 44], [32, 50], [33, 43], [34, 33], [35, 34], [36, 39], [37, 36], [38, 35], [39, 38], [40, 7], [41, 20], [42, 32], [43, 45], [44, 18], [45, 15], [46, 25], [47, 37], [48, 31], [49, 19], [50, 10], [51, 13]]
+A Solution was found
+Objective value: 7544.4
+Problem solved in 5164 iterations
+Problem solved in 15 nodes
+Final Route Configuration succesfully created at:
+data/routes/berlin52.csv

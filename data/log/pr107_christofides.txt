@@ -1,0 +1,11 @@
+WARNING: Logging before InitGoogleLogging() is written to STDERR
+I00-1 -1:-1:-1.734375  2036 search.cc:264] Start search (memory used = 80.61 MB)
+I00-1 -1:-1:-1.117431  2036 search.cc:264] Root node processed (time = 0 ms, constraints = 436, memory used = 80.73 MB)
+I00-1 -1:-1:-1.244384  2036 search.cc:264] Solution #0 (51707, time = 19 ms, branches = 33, failures = 1, depth = 33, memory used = 80.99 MB, limit = 100%)
+I00-1 -1:-1:-1.399658  2036 search.cc:264] Finished search tree (time = 19 ms, branches = 33, failures = 35, memory used = 81.00 MB)
+I00-1 -1:-1:-1.472167  2036 search.cc:264] End search (time = 19 ms, branches = 33, failures = 35, memory used = 81.00 MB, speed = 1736 branches/s)
+Finding Initial Solution with Heuristics christofides...
+Solver status:  1
+Route:  [0, 2, 3, 63, 65, 62, 66, 67, 64, 68, 71, 70, 72, 61, 69, 73, 75, 60, 74, 77, 76, 78, 80, 59, 79, 82, 81, 83, 85, 58, 84, 87, 86, 88, 90, 57, 89, 92, 91, 93, 95, 96, 97, 94, 99, 102, 101, 100, 55, 98, 103, 105, 54, 106, 104, 56, 40, 37, 49, 52, 53, 50, 51, 48, 44, 42, 45, 47, 46, 43, 41, 38, 39, 36, 32, 33, 31, 34, 35, 30, 26, 27, 25, 28, 29, 24, 20, 21, 19, 22, 23, 18, 14, 15, 13, 16, 17, 12, 10, 7, 11, 9, 8, 6, 4, 1, 5]
+A Solution was found
+Objective value:  51707

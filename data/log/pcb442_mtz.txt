@@ -1,0 +1,25 @@
+presolving:
+(round 1, fast)       443 del vars, 0 del conss, 0 add conss, 0 chg bounds, 0 chg sides, 0 chg coeffs, 0 upgd conss, 0 impls, 884 clqs
+(round 2, exhaustive) 443 del vars, 0 del conss, 0 add conss, 0 chg bounds, 0 chg sides, 0 chg coeffs, 884 upgd conss, 0 impls, 884 clqs
+   (9.0s) probing: 51/194922 (0.0%) - 0 fixings, 0 aggregations, 0 implications, 0 bound changes
+   (9.0s) probing aborted: 50/50 successive totally useless probings
+   Deactivated symmetry handling methods, since SCIP was built without symmetry detector (SYM=none).
+presolving (3 rounds: 3 fast, 2 medium, 2 exhaustive):
+ 443 deleted vars, 0 deleted constraints, 0 added constraints, 0 tightened bounds, 0 added holes, 0 changed sides, 0 changed coefficients
+ 0 implications, 884 cliques
+presolved problem has 195363 variables (194922 bin, 0 int, 0 impl, 441 cont) and 194924 constraints
+    884 constraints of type <setppc>
+ 194040 constraints of type <linear>
+Presolving Time: 9.00
+
+
+SCIP Status        : solving was interrupted [time limit reached]
+Solving Time (sec) : 613.00
+Solving Nodes      : 1
+Primal Bound       : +1.00000000000000e+20 (0 solutions)
+Dual Bound         : +0.00000000000000e+00
+Gap                : infinite
+Trying to solve problem with MTZ Solver Method...
+Starting Solver, time limit setted to 10 minutes
+Route:  []
+No solution was found. :(
