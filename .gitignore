@@ -1,3 +1,8 @@
 /env
 */__pycache__
 __pycache__
+/data
+**/*.txt
+src/visualizador/*.html
+src/benchmark/
+benchmarks
