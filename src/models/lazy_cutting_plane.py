@@ -2,17 +2,19 @@ from __future__ import print_function
 from ortools.linear_solver import pywraplp
 from .classic_solver import ClassicSolver
 import numpy as np
+import matplotlib.pyplot as plt
+import networkx as nx
 
 # Sub-tour elimination(DFJ)
 class LazyCuttingPlane(ClassicSolver):
-    def __init__(self, distance_matrix, initial_solution=None, timeout=None, verbose=False):
+    def __init__(self, distance_matrix, initial_solution=None, timeout=None, verbose=False, name_instance=None):
         super().__init__(distance_matrix, initial_solution, timeout, verbose)
+        self.name_instance = name_instance
 
     def init_constraints(self):
         super().init_constraints()
-
         # For all sub-sets() less than the number of cities
-        for i in range(2, int(min(3, self.n_nodes/2)+1)):
+        for i in range(2, 3):
             next_node = list(range(0, self.n_nodes))
             # For all paths, check sub-cicle of length i
             for j in range(0, self.n_nodes):
@@ -46,7 +48,8 @@ class LazyCuttingPlane(ClassicSolver):
             self.all_sub_cycles(acc, initial, next, nivel + 1, length_cycle, next_node)
             next_node.append(next)
             acc.pop(-1)
-        return 
+        return   
+
 
     def has_sub_cycle(self, acumulator, path):
 
@@ -66,7 +69,7 @@ class LazyCuttingPlane(ClassicSolver):
                     else:
                         if(len(acumulator) < self.n_nodes):
                             is_sub_path = True
-                    break   
+                    break
         
         return is_sub_path
 
@@ -80,6 +83,50 @@ class LazyCuttingPlane(ClassicSolver):
             return True
         return False
 
+    # Inicialize variables using Hint
+    def set_new_hint(self):
+        print("------------set-hint-----------------")
+        print(self.final_path)
+        if self.initial_solution is not None:
+            self.vet_vars = []
+            self.vet_init = []
+            for i in range(self.n_nodes):
+                for j in range(self.n_nodes):
+                    self.vet_vars.append(self.x[i,j])
+                    self.vet_init.append(self.final_path[i][j])
+
+        # Inicialize variables using Hint
+        self.solver.SetHint(self.vet_vars, self.vet_init)
+
+    def print_solution(self):
+        [print(u) for u in self.final_path]
+        G = nx.DiGraph()
+        G.add_edges_from(self.final_path)
+        pos = nx.spring_layout(G)
+        nx.draw(G, cmap = plt.get_cmap('jet'))
+        plt.show()
+
+    def has_time(self):
+        """Procure pelas linhas e adicione ao tempo total"""
+
+        total_time = 0.0
+        # Open the file in read only mode
+        with open((self.name_instance), 'r') as read_obj:
+            # Read all lines in the file one by one
+            for line in read_obj:
+                # For each line, check if line contains the string
+                if "Solving Time" in line:
+                    num = float(line.split(" : ")[1])
+                    # If yes, then add the line number & line as a tuple in the list
+
+                    if num == 0.0:
+                        num += 0.01
+
+                    total_time += num
+        # Return list of tuples containing line numbers and lines where string is found
+        print(total_time)
+        return (total_time < 60 * self.timeout)
+
     def solve(self):
         if self.solver is None:
             return
@@ -87,18 +134,19 @@ class LazyCuttingPlane(ClassicSolver):
         # Execute the model and save the results
         self.status = self.solver.Solve()
         self.objective_value =  self.solver.Objective().Value()
-        
-        max_cycles = 100
         i = 0
-        while(i < max_cycles):
+        while(i < 100 and self.has_time()):
             # print('The problem does not have an optimal solution in cycle: %d' %(i))
-            print("The upper bound solution is %d " % (self.objective_value))
             if(self.block_subpath() is True):
                 self.status = self.solver.Solve()
-                self.objective_value =  self.solver.Objective().Value()
+                self.objective_value = self.solver.Objective().Value()
             else:
-                break
+              break
             i += 1 
+            print("Cicle: ", i)
+        self.resolve_final_path()
+        print("Route: ", self.final_path)
+
 # Execute to test the MTZSolver
 if __name__ == '__main__':
     test_data =    [[-1, 1, 5, 17, 1],
@@ -109,3 +157,10 @@ if __name__ == '__main__':
     
     my_solver = LazyCuttingPlane(test_data)
     my_solver.solve()
+
+    [print(u) for u in my_solver.final_path]
+    G = nx.DiGraph()
+    G.add_edges_from(my_solver.final_path)
+    pos = nx.spring_layout(G)
+    nx.draw(G, cmap = plt.get_cmap('jet'))
+    plt.show()

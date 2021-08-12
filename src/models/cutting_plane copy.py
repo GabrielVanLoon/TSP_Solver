@@ -1,13 +1,14 @@
 from ortools.linear_solver import pywraplp
-from .classic_solver import ClassicSolver
+from classic_solver import ClassicSolver
 
 # Sub-tour elimination(DFJ)
 class CuttingPlane(ClassicSolver):
     def __init__(self, distance_matrix, initial_solution=None, timeout=None, verbose=False):
         super().__init__(distance_matrix, initial_solution, timeout, verbose)
-        
+
     def init_constraints(self):
         super().init_constraints()
+        
         # Auxiliary array of cities [0, ..., n]
 
         # For all sub-sets() less than the number of cities

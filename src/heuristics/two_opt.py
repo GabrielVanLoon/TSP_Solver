@@ -123,7 +123,7 @@ class K_opt:
         if self.path == []:
             return inf
 
-        cost = 0
+        cost = 0.0
         for node in range(0, len(self.path) - 1):
             cost += self.dist_matrix[self.path[node]][self.path[node + 1]]
         cost += self.dist_matrix[self.path[-1]][self.path[0]]
@@ -152,7 +152,7 @@ class K_opt:
         '''
         return (self.dist_matrix[node1][node2] + self.dist_matrix[node3][node4]) - (self.dist_matrix[node1][node3] + self.dist_matrix[node2][node4])
 
-    def two_opt(self, iteration=10):
+    def two_opt(self, iteration=15):
         '''
         Utiliza a heuristica de melhoria de vizinhanca 2-opt
         para minimizar a funcao objetivo. O algoritmo para quando nao 
@@ -196,10 +196,11 @@ class K_opt:
 
         return self.edges
 
+
 if __name__=="__main__":
 
     def load_matrix(file_name='11'):
-        with open(f'../../data/distances/{file_name}.txt', 'r') as dist_file:
+        with open(f'../../data/distances/12.txt', 'r') as dist_file:
             cost_matrix = list()
             for line in dist_file:
                 cost_matrix.append([int(k) for k in line.strip().split('\t')])
@@ -209,7 +210,7 @@ if __name__=="__main__":
 
     # models = ['djibouti38', 'western_sahara29']
     
-    models = ['libra6', 'orion15']
+    models = ['a280']
 
     for m in models:
         time1 = time.time()
@@ -219,7 +220,7 @@ if __name__=="__main__":
 
         print(m)
         print(cost)
-        print('{:.2f} seg.'.format(time2 - time1))
+        print('{:.5f} seg.'.format(time2 - time1))
 
         start_index = opt.path.index(0)
         rotate_path = [] + opt.path[start_index:] + opt.path[:start_index]

@@ -15,7 +15,7 @@ class MTZSolver(ClassicSolver):
 
     def init_variables(self):
         super().init_variables()
-
+        
         # Inicializate u real variable from 1, n
         self.u = {}
         for i in range(self.n_nodes):

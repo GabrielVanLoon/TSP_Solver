@@ -29,6 +29,7 @@ class ClassicSolver:
  
     def init_solver(self):
         self.solver = pywraplp.Solver.CreateSolver('SCIP')
+        self.solver.EnableOutput()
           
     def init_variables(self):
         if self.solver is None:
@@ -92,6 +93,8 @@ class ClassicSolver:
 
         self.status = self.solver.Solve()
         self.objective_value =  self.solver.Objective().Value()
+        self.resolve_final_path()
+        print("Route: ", self.final_path)
 
     def resolve_final_path(self):
         if self.solver is None:
@@ -105,6 +108,7 @@ class ClassicSolver:
             for j in range(self.n_nodes):
                 if i != j and self.x[i,j].solution_value():
                     self.final_path.append([i,j])
+        
         
 # Execute to test the ClassicSolver
 if __name__ == '__main__':
