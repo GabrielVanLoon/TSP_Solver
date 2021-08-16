@@ -6,13 +6,15 @@ from pyvis.network import Network
 from simulator import Simulator
 import time
 
+from components.buttons import Button
+from side_options import options
 # Distancia dada ou não 
 # normalizar o tempo
 # input : cada frame corresponde à
 
-#####################################
-# Style
-#####################################
+##############################################
+### Style
+##############################################
 st.set_page_config(page_title='Simulator TSP')
 
 st.markdown(""" <style> 
@@ -29,66 +31,86 @@ st.markdown(f""" <style>
         padding-bottom: {padding}rem;
     }} </style> """, unsafe_allow_html=True)
 
-#####################################
-# Choosing params
-#####################################
-st.sidebar.markdown('# Choose your params')
+label_generator = Button()
+status_solver = False
+
+@st.cache(allow_output_mutation=True)
+def load_class_simulador(series_pick, option_alg):
+    return Simulator(series_pick=series_pick, solver=option_alg)
+
+@st.cache()
+def solve_class_simulador(series_pick, option_alg):
+    print("Solving serie: {0} with alg: {1}".format(series_pick, option_alg))
+    return simulator.solving()
+
+###############################################
+### Choosing params 
+###############################################
+st.sidebar.markdown('# Configuração')
 
 # for selecting series
 # series_pick = st.sidebar.selectbox('Select series:',
 #                                    list(dict({'Initial': "Initial",}).values()),
 #                                    key='series', index=1)
-series_pick = st.sidebar.selectbox('Select series:', ('Initial', 'Initial', 'Choose your file...'), index = 1)
-option_alg = st.sidebar.selectbox('Select algorithm: ',('NN (Nearest Neighbor)','Christofides'))
+series_pick = st.sidebar.selectbox('Caso Teste:', ('orion15', 'Enviar um caso teste...'), index = 1)
+option_alg = st.sidebar.selectbox('Algoritmo 1: ', ('NN (Nearest Neighbor)','Christofides'))
 
-#####################################
+###############################################
 # Init simulation
-#####################################
+###############################################
 st.markdown(
-    '''#### Simulator TSP
-Select the algorithm and visualize\n
-Click and drag nodes to rearrange the network.
+    '''### Simulador TSP 
+Selecione um algoritmo e visualize como ele performa solucionando o problema do Traveling Salesman Problem (TSP).\n
+Clique e arraste os vértices para melhor visualização.
 ''')
-simulator = Simulator()
+simulator = load_class_simulador(series_pick, option_alg)
 
-###########################
-#### INTERACTIONS CHART ###
-###########################
+################################################
+#### Render CHART ###
+################################################
+_, sidebar_col2, _ = st.sidebar.columns(3)
+_, main_col2, _ = st.columns(3)
 
-# define options in sidebar
-st.sidebar.markdown('## NETWORK OPTIONS')
-physics_bool = st.sidebar.checkbox(
-    'Add physics engine', key='phys', value=False)
-box_bool = st.sidebar.checkbox('Make nodes boxes', key='boxb', value=True)
-col_bool = st.sidebar.checkbox('Random colors', key='colb', value=False)
+if series_pick == 'Enviar um caso teste...':
+    print('TODO')
+else:
+    status_solver, msg = solve_class_simulador(series_pick, option_alg)
 
-interactions = st.sidebar.slider(
-    label="Itaração",
-    min_value=0,
-    max_value=4,
-    step=1,
-    value=0)
+if sidebar_col2.button('Start'):
+    gif_runner = main_col2.image('./images/icons/spinner.gif')
+    
+    if series_pick == 'Enviar um caso teste...':
+        status_solver, msg = False, 'Escolha um teste disponível.'
+        print('TODO')
+    else:
+        status_solver, msg = simulator.solving()
+    
+    if status_solver != True:
+        html_error_msg = label_generator.error(msg)
+        label_error = st.markdown(html_error_msg, unsafe_allow_html=True)
 
-simulator.render_instance("Initial")
+    gif_runner.empty()
+  
+################################################
+#### INTERACTIONS CHART
+################################################
 
-HtmlFile = open("initial.html", 'r', encoding='utf-8')
-source_code = HtmlFile.read() 
-components.html(source_code, height = 500*1.1,width=750*1.1)
+# Define options in sidebar
+if status_solver == True:
+    st.sidebar.markdown('## OPÇÕES')
+    id_iteration = options(st, len(simulator.iterations))
+    st.write(id_iteration)
+    simulator.render_instance(id_iteration)
 
-# Add a placeholder
-latest_iteration = st.empty()
-bar = st.progress(0)
-
-for i in range(100):
-  # Update the progress bar with each iteration.
-  latest_iteration.text(f'Iteration {i+1}')
-  bar.progress(i + 1)
-  time.sleep(1.5)
+################################################
+#### Footer ###
+################################################
 
 st.markdown(
-    '''#### Description
-yadda, yadda
+    '''#### Descrição
+    visualize como diferentes soluções agem ao buscar um caminho para o problema do Caixeiro Viajante.
 ''')
+
 
 ###############
 #### ABOUT ####
