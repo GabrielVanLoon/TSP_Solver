@@ -88,6 +88,9 @@ class Simulator:
 
 
     def load_solution(self, iteration):        
+        '''
+            Update and plot solution
+        '''
         # Reset graph
         self.nx_graph = self.nx_graph_default.copy()
         if self.iterations[iteration]['path'] == []:
