@@ -31,10 +31,12 @@ class Simulator:
     def __init__(self, series_pick, solver, initial_node = 0, initial_solution = []):
         # Simulation inicial configs
         self.series_pick        = series_pick      # the series choosen by user
+        self.nx_graph_default   = None             # Networkx instance
         self.nx_graph           = None             # Networkx instance
         self.iterations         = {}               # id, solution, objective_value, time_elapsed
+        self.coords             = {}
         self.solver = solver_translator[solver]    # Algo of the solver
-        
+
         # Load discente matrix with distace matrix .txt file
         self.distance_matrix = load_data(distPath + self.series_pick + '.txt')  
     
@@ -54,13 +56,13 @@ class Simulator:
 
     def load_nx_graph(self):
         # Load node positions
-        coords = read_csv_coord(coordPath + self.series_pick + '.csv')
+        self.coords = read_csv_coord(coordPath + self.series_pick + '.csv')
         
         # Create a graph with the distance matrix
-        self.nx_graph = nx.empty_graph(len(coords))  # create initial empty graph
+        self.nx_graph = nx.empty_graph(len(self.coords))  # create initial empty graph
 
         # Add nodes to networkx
-        for idx, coord in enumerate(coords):
+        for idx, coord in enumerate(self.coords):
             for k, v in {'label': idx,
                  'physics': False,
                  'x': coord['x'] * 2.0,
@@ -78,19 +80,42 @@ class Simulator:
                     label = ''
                     if self.hide_weight == False and self.distance_matrix[i][idx] != 0:
                         label = f'{int(self.distance_matrix[i][idx])}'
+                        
                     self.nx_graph.add_edge(i, idx, width=1, color='rgb(100,100,100)', label=label)
-        
+
+            print("generated Network")
+            self.nx_graph_default = self.nx_graph.copy()
 
 
-    def load_solution(self, iteration):
+    def load_solution(self, iteration):        
+        # Reset graph
+        self.nx_graph = self.nx_graph_default.copy()
+        if self.iterations[iteration]['path'] == []:
+            return 
+
         label = ''
-        for node1, node2 in iterations[iteration]['path']:
+        for node1, node2 in self.iterations[iteration]['path']:
             if self.hide_weight == False and self.distance_matrix[node1][node2] != 0:
-                label = f'{int(self.distance_matrix[i][idx])}'
-            self.nx_graph.add_edge(node1, node2, width=3, color='red', label=label)
+                label = f'{int(self.distance_matrix[node1][node2])}'
+
+            # If the edge is self loop, then the node is a initial one
+            if node1 == node2:
+                for k, v in {'label':node1,
+                    'physics': False,
+                    'x': self.coords[node1]['x'] * 2.0,
+                    'y': self.coords[node1]['y'] * 2.0,
+                    'size': 2,
+                    'shape': 'circle' if self.circle_bool else 'dot',
+                    'color': 'rgb(139,0,0)',
+                    }.items():
+
+                    self.nx_graph.nodes[node1][k] = v
+            else:
+                self.nx_graph.add_edge(node1, node2, width=3, color='rgb(139,0,0)', label=label)
 
 
-    def calling_solver(self):
+    @st.cache
+    def calling_solver(self, series_pick, solver):
         '''
             Call the solver for the series
 
@@ -119,6 +144,7 @@ class Simulator:
             Render a networkx graph in screen
         """
         print("Changed to: ", iteration)
+        self.iteration = iteration
 
         # If some propriety change, update value and reload the Networx Graph
         if self.circle_bool != circle_bool or self.hide_edges_bool != hide_edges_bool or self.hide_weight != hide_weight:
@@ -127,7 +153,7 @@ class Simulator:
             self.hide_weight        = hide_weight
             self.load_nx_graph()
 
-        self.load_solution(iteration):
+        self.load_solution(iteration)
 
         # Translate to pyvis network
         h, w = 500, 750
@@ -140,28 +166,37 @@ class Simulator:
 
         HtmlFile = open(path, 'r')  # , encoding='utf-8')
         source_code = HtmlFile.read()
-        components.html(source_code, height=h * 1.1, width=w * 1.1)
-
+        render_html = components.html(source_code, height=h * 1.1, width=w * 1.1)
+        
+        return render_html
 
     def fromstring(self, path_string):
         '''
             This function parse the matrix in string to a array matrix in python
         '''
-        num_set = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+        simbol_set = ['[', ']', ',']
         arr_list = list(path_string)
 
         matrix = []
         row = []
+        num_compose = ''
+        i = 0
+        while(i < len(arr_list)):
+            
+            if(len(row) == 2):
+                matrix.append(row)
+                row = []
 
-        for i in range(0, len(arr_list)):
-            try:
-                if(len(row) == 2):
-                    matrix.append(row)
-                    row = []
-                if(int(arr_list[i]) in num_set):
-                    row.append(int(arr_list[i]))
-            except:
-                continue
+            while(i < len(arr_list) and arr_list[i] in simbol_set):
+                i += 1
+
+            while(i < len(arr_list) and (arr_list[i] not in simbol_set)):
+                num_compose += arr_list[i]
+                i += 1
+
+            if(num_compose != ''):
+                row.append(int(num_compose))
+                num_compose = ''
 
         return matrix
 
@@ -183,23 +218,23 @@ class Simulator:
         # open and read file
         try:
             file = open(route_filename)
-            iterations = file.readlines()
+            lines = file.readlines()
             file.close()
         except:
             print("The input file does not exist.")
             return 0
             
         # For each iteration
-        for it, iteration in enumerate(iterations):
+        for it, iteration in enumerate(lines):
             
             # Read the haeder
             if it == 0:
                 continue
-            
+         
             id_iteration, path_string, time_elapsed, objective_value = iteration.split('-')
-
+            objective_value = objective_value[:len(objective_value)-1]
             iterations[int(id_iteration)] = { 'path': self.fromstring(path_string), 'time_elapsed': time_elapsed, 'objective_value': objective_value }
-        
+         
         return iterations
 
 
