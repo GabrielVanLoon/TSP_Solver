@@ -83,7 +83,11 @@ class Simulator:
 
 
     def load_solution(self, iteration):
-        return
+        label = ''
+        for node1, node2 in iterations[iteration]['path']:
+            if self.hide_weight == False and self.distance_matrix[node1][node2] != 0:
+                label = f'{int(self.distance_matrix[i][idx])}'
+            self.nx_graph.add_edge(node1, node2, width=3, color='red', label=label)
 
 
     def calling_solver(self):
@@ -122,6 +126,8 @@ class Simulator:
             self.hide_edges_bool    = hide_edges_bool
             self.hide_weight        = hide_weight
             self.load_nx_graph()
+
+        self.load_solution(iteration):
 
         # Translate to pyvis network
         h, w = 500, 750
