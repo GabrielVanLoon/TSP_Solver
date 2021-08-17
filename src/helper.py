@@ -7,6 +7,7 @@ def load_data(filename):
     '''
     # open and read file
     try:
+        print(dir + filename)
         file = open(dir + filename)
         lines = file.readlines()
         file.close()

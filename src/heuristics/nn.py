@@ -78,7 +78,7 @@ class NN:
 
         if self.tracking == True:
             self.resolve_final_path()
-            self.iterations[iterator] = {'path': self.final_path, 'time_elapsed': self.format_time(time_now1, time_now2)}
+            self.iterations[iterator] = {'path': self.final_path, 'time_elapsed': self.format_time(time_now1, time_now2), 'objective_value': self.objective_value}
             iterator += 1 
 
         for it in range(len(self.dist_matrix)):
@@ -105,7 +105,7 @@ class NN:
             time_now2 = time.time()
             if self.tracking == True:
                 self.resolve_final_path()
-                self.iterations[iterator] = {'path': self.final_path, 'time_elapsed': self.format_time(time_now1, time_now2)}
+                self.iterations[iterator] = {'path': self.final_path, 'time_elapsed': self.format_time(time_now1, time_now2), 'objective_value': self.objective_value}
                 iterator += 1 
         
         self.resolve_final_path()

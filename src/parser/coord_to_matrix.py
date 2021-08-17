@@ -5,7 +5,17 @@ from   math  import sqrt, ceil
 def calc_dist(a, b):
     return sqrt((a['x'] - b['x'])**2 + (a['y'] - b['y'])**2)
 
-def make_matrix_dist(csv_filename, txt_filename, num_diag = -1.0, encoder = 'utf-8'):
+
+def read_csv_coord(csv_filename, encoder = 'utf-8'):
+    with open(csv_filename, 'r', encoding=encoder) as csv_file:
+
+        reader = list(csv.DictReader(csv_file))
+
+        coord = [{'x': float(row['x']), 'y': float(row['y'])} for row in reader]
+        return coord
+
+
+def make_matrix_dist(csv_filename, txt_filename, num_diag = 0.0, encoder = 'utf-8'):
 
     '''
     Cria um arquivo txt com a matriz de distancias entre as coordenadas

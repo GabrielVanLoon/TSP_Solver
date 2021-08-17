@@ -41,7 +41,7 @@ def load_class_simulador(series_pick, option_alg):
 @st.cache()
 def solve_class_simulador(series_pick, option_alg):
     print("Solving serie: {0} with alg: {1}".format(series_pick, option_alg))
-    return simulator.solving()
+    return simulator.calling_solver()
 
 ###############################################
 ### Choosing params 
@@ -52,7 +52,7 @@ st.sidebar.markdown('# Configuração')
 # series_pick = st.sidebar.selectbox('Select series:',
 #                                    list(dict({'Initial': "Initial",}).values()),
 #                                    key='series', index=1)
-series_pick = st.sidebar.selectbox('Caso Teste:', ('orion15', 'Enviar um caso teste...'), index = 1)
+series_pick = st.sidebar.selectbox('Caso Teste:', ('orion15', 'libra6', 'Enviar um caso teste...'), index = 1)
 option_alg = st.sidebar.selectbox('Algoritmo 1: ', ('NN (Nearest Neighbor)','Christofides'))
 
 ###############################################
@@ -71,24 +71,32 @@ simulator = load_class_simulador(series_pick, option_alg)
 _, sidebar_col2, _ = st.sidebar.columns(3)
 _, main_col2, _ = st.columns(3)
 
+# On change of series or alg, call solver
 if series_pick == 'Enviar um caso teste...':
     print('TODO')
 else:
+    gif_runner = main_col2.image('./images/icons/spinner.gif')
     status_solver, msg = solve_class_simulador(series_pick, option_alg)
 
-if sidebar_col2.button('Start'):
-    gif_runner = main_col2.image('./images/icons/spinner.gif')
-    
-    if series_pick == 'Enviar um caso teste...':
-        status_solver, msg = False, 'Escolha um teste disponível.'
-        print('TODO')
-    else:
-        status_solver, msg = simulator.solving()
-    
     if status_solver != True:
         html_error_msg = label_generator.error(msg)
         label_error = st.markdown(html_error_msg, unsafe_allow_html=True)
 
+    gif_runner.empty()
+
+if sidebar_col2.button('Start'):
+    gif_runner = main_col2.image('./images/icons/spinner.gif')
+    
+    # if series_pick == 'Enviar um caso teste...':
+    #     status_solver, msg = False, 'Escolha um teste disponível.'
+    #     print('TODO')
+    # else:
+    #     status_solver, msg = simulator.calling_solver()
+    
+    # if status_solver != True:
+    #     html_error_msg = label_generator.error(msg)
+    #     label_error = st.markdown(html_error_msg, unsafe_allow_html=True)
+    time.sleep(2.0)
     gif_runner.empty()
   
 ################################################
@@ -100,7 +108,11 @@ if status_solver == True:
     st.sidebar.markdown('## OPÇÕES')
     id_iteration = options(st, len(simulator.iterations))
     st.write(id_iteration)
-    simulator.render_instance(id_iteration)
+
+    circle_bool = st.sidebar.checkbox('Nós circulares', key='boxb', value=True)
+    hide_edges_bool = st.sidebar.checkbox('Ocultar arestas', key='hedges', value=False)
+    hide_weight_bool = st.sidebar.checkbox('Ocultar pesos das arestas', key='hweights', value=False)
+    simulator.render_instance(id_iteration, circle_bool, hide_edges_bool, hide_weight_bool)
 
 ################################################
 #### Footer ###
