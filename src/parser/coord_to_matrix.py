@@ -3,7 +3,7 @@ import numpy as np
 from   math  import sqrt, ceil
 
 def calc_dist(a, b):
-    return sqrt((a['x'] - b['x'])**2 + (a['y'] - b['y'])**2)
+    return int(sqrt((a['x'] - b['x'])**2 + (a['y'] - b['y'])**2))
 
 
 def read_csv_coord(csv_filename, encoder = 'utf-8'):

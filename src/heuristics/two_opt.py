@@ -20,8 +20,7 @@ from math import inf
 """
 
 class K_opt:
-
-    def __init__(self, dist_matrix):
+    def __init__(self, dist_matrix, initial_solution, tracking=False):
         '''
         Classe construtora a qual comeca inicializando
         a matriz de distancia, o custo (infinito) e o caminho (ainda vazio)
@@ -30,84 +29,24 @@ class K_opt:
         ----------
             dist_matrix : np.array
                 Matriz de distancias
+
+            tracking    : bool 
+                Enable output though iterations
         '''
         self.dist_matrix = dist_matrix
         self.cost  = inf
-        self.path  = []
-
-
-    def initial_solution(self, node_init=0):
-        '''
-        Calcula a solucao inicial utilizando 
-        nearest neighbors
-
-        Parametros
-        ----------
-            node_init : int
-                vertice de inicial
+        self.path  = initial_solution
+        self.final_path = []
         
-        Retorno
-        -------
-            list(int, ...)
-                retorno uma lista com o caminho
-        '''
-        current_node        = node_init
-        self.path           = []
-        visited             = np.zeros(len(self.dist_matrix))
-        visited[node_init]  = 1
+        self.tracking = tracking
+        self.iterations = {}                    # id, solution, objective_value, time_elapsed
         
-        for it in range(len(self.dist_matrix)):
-            
-            min_dist = inf
-            min_viz  = -1
-
-            if it == (len(self.dist_matrix)-1):
-                self.path.append(current_node)
-            else:
-                for viz in range(len(self.dist_matrix)):
-                    if (current_node == viz) or (visited[viz] == 1):
-                        continue
-                    elif self.dist_matrix[current_node][viz] < min_dist:
-                        min_dist = self.dist_matrix[current_node][viz]
-                        min_viz  = viz
-                
-                self.path.append(current_node)
-
-                visited[min_viz] = 1
-                current_node = min_viz
+        self.status = None
+        self.objective_value = 0
         
-        return self.path
-    
-    def all_solutions(self):
-        '''
-        Verifica qual eh a melhor solucao inicial utilizando o
-        Nearest Neighborhood. Para isso eh testado todos os nos
-        como iniciais
 
-        Retorno
-        -------
-            minimum_node : int
-                id do melhor no inicial
-            minimum_dist : int
-                menor distancia
-        '''
-        
-        minimum_dist = inf
-        minimum_node = 0
-
-        for i in range(len(self.dist_matrix)):
-            opt.initial_solution(node_init=i)
-            if minimum_dist > opt.total_cost():
-                minimum_dist = opt.total_cost()
-                minimum_node = i
-        
-        if(minimum_node != len(self.dist_matrix)-1):
-            opt.initial_solution(node_init=minimum_node)
-            minimum_dist = opt.total_cost()
-
-        self.cost = minimum_dist
-
-        return minimum_node, minimum_dist
+    def format_time(self, time1, time2):
+        return round((time2 - time1), 2)
 
 
     def total_cost(self):
@@ -129,6 +68,7 @@ class K_opt:
             cost += self.dist_matrix[self.path[node]][self.path[node + 1]]
         cost += self.dist_matrix[self.path[-1]][self.path[0]]
         return cost
+
     
     def edge_cost(self, node1, node2, node3, node4):
         '''
@@ -153,7 +93,8 @@ class K_opt:
         '''
         return (self.dist_matrix[node1][node2] + self.dist_matrix[node3][node4]) - (self.dist_matrix[node1][node3] + self.dist_matrix[node2][node4])
 
-    def two_opt(self, iteration=15):
+
+    def solve(self, iteration=15):
         '''
         Utiliza a heuristica de melhoria de vizinhanca 2-opt
         para minimizar a funcao objetivo. O algoritmo para quando nao 
@@ -170,24 +111,73 @@ class K_opt:
             list(int, ...)
                 Retorna o melhor caminho encontrado
         '''
-
+        iterator = 0
         k = 0
+
+        if self.tracking == True:
+            self.resolve_final_path()
+            self.iterations[iterator] = {'path': self.final_path, 'time_elapsed': 0.0, 'objective_value': self.objective_value}
+        iterator += 1
+
         enhanced_path = self.path
         improved = True
         while improved and k < iteration:
+            time_now1 = time.time()
             improved = False
+
+
             for i in range(1, len(self.path) - 2):
                 for j in range(i + 2,    len(self.path)):
+                    
+                    if self.tracking:
+                        max_num_nodes = len(self.path)
+                        cost = 0.0
+                        self.final_path = []
+
                     if self.edge_cost(enhanced_path[i-1], enhanced_path[i], enhanced_path[j-1], enhanced_path[j]) > 0:
+                        
+                        # Save changes to the iteration dict BEFORE route change
+                        if self.tracking == True:
+                            for node in range(max_num_nodes):
+                                if node == i or node == j or node == i-1 or node==j-1:
+                                    self.final_path.append([self.path[node], self.path[node]])   
+
+                                self.final_path.append([self.path[node], self.path[(node + 1)%max_num_nodes]])
+                                cost += self.dist_matrix[self.path[node]][self.path[(node + 1)%max_num_nodes]]
+
+                            self.objective_value = cost
+                            self.iterations[iterator] = {'path': self.final_path, 'time_elapsed': 0.0, 'objective_value': self.objective_value}
+                            iterator += 1
+                            self.final_path = []
+
+                        # improve route
                         enhanced_path[i:j] = enhanced_path[j - 1:i - 1:-1]
                         improved = True
+
+                    time_now2 = time.time()
+                    
+                    # Save changes to the iteration dict
+                    if self.tracking == True:
+                        for node in range(max_num_nodes):
+                            if node == i or node == j or node == i-1 or node==j-1:
+                                self.final_path.append([self.path[node], self.path[node]])   
+
+                            self.final_path.append([self.path[node], self.path[(node + 1)%max_num_nodes]])
+                            cost += self.dist_matrix[self.path[node]][self.path[(node + 1)%max_num_nodes]]
+
+                        self.objective_value = cost
+                        self.iterations[iterator] = {'path': self.final_path, 'time_elapsed': self.format_time(time_now1, time_now2), 'objective_value': self.objective_value}
+                    iterator += 1
+
             self.path = enhanced_path
             k += 1
         
         self.cost = self.total_cost()
 
+        print("Route: ", self.final_path)
         return self.path
     
+
     def generate_initial_cicle(self):
 
         self.edges = np.zeros((len(self.dist_matrix), len(self.dist_matrix)))
@@ -197,6 +187,16 @@ class K_opt:
 
         return self.edges
 
+
+    def resolve_final_path(self):
+        max_num_nodes = len(self.path)
+        cost = 0.0
+        self.final_path = np.zeros((max_num_nodes, 2))
+        for node in range(max_num_nodes):
+            self.final_path[node] = [self.path[node], self.path[(node + 1)%max_num_nodes]] 
+            cost += self.dist_matrix[self.path[node]][self.path[(node + 1)%max_num_nodes]]
+
+        self.objective_value = cost
 
 if __name__=="__main__":
 

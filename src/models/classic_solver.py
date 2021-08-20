@@ -114,7 +114,7 @@ class ClassicSolver:
             for j in range(self.n_nodes):
                 if i != j and self.x[i,j].solution_value():
                     self.final_path.append([i,j])
-        
+                    # print(self.x[i,j].solution_value(), end=' ')
         
 # Execute to test the ClassicSolver
 if __name__ == '__main__':

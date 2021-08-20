@@ -21,7 +21,7 @@ distPath = 'data/distances/'
 coordPath = 'data/coord/'
 
 # Options map
-solver_translator = {'': None, 'NN (Nearest Neighbor)': 'nn', 'Christofides': None}
+solver_translator = {'': None, 'NN (Nearest Neighbor)': 'nn', 'Christofides': 'chris', 'Two Opt': '2opt'}
 
 class Simulator:
     """
@@ -65,8 +65,8 @@ class Simulator:
         for idx, coord in enumerate(self.coords):
             for k, v in {'label': idx,
                  'physics': False,
-                 'x': coord['x'] * 2.0,
-                 'y': coord['y'] * 2.0,
+                 'x': coord['x'] * 1.4,
+                 'y': coord['y'] * 1.4,
                  'size': 2,
                  'shape': 'circle' if self.circle_bool else 'dot',
                  'color': 'blue',
@@ -83,7 +83,7 @@ class Simulator:
                         
                     self.nx_graph.add_edge(i, idx, width=1, color='rgb(100,100,100)', label=label)
 
-            print("generated Network")
+            # print("generated Network")
             self.nx_graph_default = self.nx_graph.copy()
 
 
@@ -105,8 +105,8 @@ class Simulator:
             if node1 == node2:
                 for k, v in {'label':node1,
                     'physics': False,
-                    'x': self.coords[node1]['x'] * 2.0,
-                    'y': self.coords[node1]['y'] * 2.0,
+                    'x': self.coords[node1]['x'] * 1.4,
+                    'y': self.coords[node1]['y'] * 1.4,
                     'size': 2,
                     'shape': 'circle' if self.circle_bool else 'dot',
                     'color': 'rgb(139,0,0)',
@@ -124,7 +124,7 @@ class Simulator:
 
             This function should be called when series or solver changes
         '''
-        print("Solving...")
+        # print("Solving...")
         self.load_nx_graph()
 
         # Validation
@@ -138,15 +138,21 @@ class Simulator:
         if self.solver == "nn":
             os.system("./main.py visualization -i {0} -s {1}".format(self.series_pick, self.solver))
             self.iterations = self.read_tracking(trackingPath + self.series_pick + '_' + self.solver + '.txt')
+        elif self.solver == "2opt":
+            os.system("./main.py visualization -i {0} -s {1} -I nn".format(self.series_pick, self.solver))
+            self.iterations = self.read_tracking(trackingPath + self.series_pick + '_' + self.solver + '.txt')
+        elif self.solver == "chris":
+            os.system("./main.py visualization -i {0} -s {1}".format(self.series_pick, self.solver))
+            self.iterations = self.read_tracking(trackingPath + self.series_pick + '_' + self.solver + '.txt')
 
         return [True, '']
 
 
-    def render_instance(self, iteration, circle_bool, hide_edges_bool, hide_weight):
+    def render_instance(self, iteration, circle_bool, hide_edges_bool, hide_weight, h = 500, w = 750):
         """
             Render a networkx graph in screen
         """
-        print("Changed to: ", iteration)
+        # print("Changed to: ", iteration)
         self.iteration = iteration
 
         # If some propriety change, update value and reload the Networx Graph
@@ -159,7 +165,6 @@ class Simulator:
         self.load_solution(iteration)
 
         # Translate to pyvis network
-        h, w = 500, 750
         nt = Network(f'{h}px', f'{w}px',
                     font_color='white')
         nt.from_nx(self.nx_graph)
@@ -172,6 +177,7 @@ class Simulator:
         render_html = components.html(source_code, height=h * 1.1, width=w * 1.1)
         
         return render_html
+
 
     def fromstring(self, path_string):
         '''

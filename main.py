@@ -20,6 +20,8 @@ from src.models.lazy_cutting_plane import LazyCuttingPlane
 
 from src.heuristics.two_opt import K_opt
 from src.heuristics.nn import NN
+from src.heuristics.christofides_1 import Christofides
+
 
 def checkFilenames(options, inputFlag=True, outputFlag=True):
     '''
@@ -68,6 +70,9 @@ if __name__=="__main__":
     parser.add_option("-b", "--background", dest="background", 
         action="store_true", 
         help="use this flag to...")
+    parser.add_option("-I", "--Initial", dest="initial", 
+        default="", type="string", 
+        help="specify initial solving method")
 
     parser.add_option("-H", "--heuristic", dest="heuristic", 
         action="store_true", 
@@ -159,13 +164,10 @@ elif args[0] == "solve":
             tracking = options.tracking
 
         #If Heuristics is setted then uses two_opt
-        if options.heuristic:
-            print("Finding Initial Solution with Heuristics...")
-            opt = K_opt(test_data)
-            # opt.all_solutions()
-            opt.initial_solution()
-            opt.two_opt(iteration=2)
-            initial_solution = opt.generate_initial_cicle()
+        if options.initial != "":
+            print(f"Finding Initial Solution with Inicial solution {options.initial}")
+            opt = NN(test_data, tracking=False)       
+            initial_solution = opt.solve()
             print("Initial Solution Found with Lower Bound =", opt.cost)
 
         #Checks chosen solving method
@@ -178,15 +180,20 @@ elif args[0] == "solve":
         elif(options.solver == "dfj2"):
             print("Trying to solve problem with DFJ version 2.0 Method...")
             my_solver = LazyCuttingPlane(test_data, initial_solution=initial_solution, timeout=timeout, verbose=verbose)
-        elif(options.solver == "dl"):
-            print("Trying to solve problem with DL version Method...")
-            my_solver = DLSolver(test_data, initial_solution=initial_solution, timeout=timeout, verbose=verbose)
         elif(options.solver == "gg"):
             print("Trying to solve problem with GG version Method...")
             my_solver = GGSolver(test_data, initial_solution=initial_solution, timeout=timeout, verbose=verbose)
+        elif(options.solver == "2opt"):
+            print("Trying to solve problem with TwoOpt version Method...")
+            my_solver = K_opt(test_data, initial_solution=initial_solution, tracking=tracking)
+            my_solver.status = pywraplp.Solver.FEASIBLE
         elif(options.solver == "nn"):
             print("Trying to solve problem with NN version Method...")
             my_solver = NN(test_data, tracking)
+            my_solver.status = pywraplp.Solver.FEASIBLE
+        elif(options.solver == "chris"):
+            print("Trying to solve problem with Christofides version Method...")
+            my_solver = Christofides(test_data, tracking=tracking)
             my_solver.status = pywraplp.Solver.FEASIBLE
         else:
             print("Trying to solve problem with Classic Solver Method...")
@@ -264,8 +271,10 @@ elif(args[0] == "all"):
             os.system("./main.py solve -i {0}.txt -o {0}.csv -s dfj2 -t 15 -C {0}.csv {1}".format(options.input, heuristic_flag))
         elif(options.solver == "dl"):
             os.system("./main.py solve -i {0}.txt -o {0}.csv -s dl -t 15 -C {0}.csv {1}".format(options.input, heuristic_flag))
+        elif(options.solver == "chris"):
+            os.system("./main.py solve -i {0}.txt -o {0}.csv -s chris -t 15 -C {0}.csv {1}".format(options.input, heuristic_flag))
         else:
-            os.system("./main.py solve -i {0}.txt -o {0}.csv -s dl -t 15 -C {0}.csv {1}".format(options.input, heuristic_flag))
+            os.system("./main.py solve -i {0}.txt -o {0}.csv -s dfj -t 15 -C {0}.csv {1}".format(options.input, heuristic_flag))
         
         # os.system("./main.py plot -i {0}.csv -o {0}.png".format(options.input))
 
@@ -275,7 +284,12 @@ elif(args[0] == "visualization"):
     else:
         os.system("./main.py tsp -i {0}.tsp -o {0}.csv".format(options.input))
         os.system("./main.py dist -i {0}.csv -o {0}.txt".format(options.input))
-    os.system("./main.py solve -i {0}.txt -o {0}_{1}.txt -s {1} -t 10 -C {0}.csv -T".format(options.input, options.solver))
+    
+    initial_flag = ""
+    if options.initial != "":
+        initial_flag = f"-I {options.initial}"
+
+    os.system("./main.py solve -i {0}.txt -o {0}_{1}.txt -s {1} -t 10 -C {0}.csv -T {2}".format(options.input, options.solver, initial_flag))
 elif(args[0] == "app"):
      os.system("streamlit run src/visualizator/app.py")
 else:

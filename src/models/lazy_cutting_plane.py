@@ -135,7 +135,7 @@ class LazyCuttingPlane(ClassicSolver):
         self.status = self.solver.Solve()
         self.objective_value =  self.solver.Objective().Value()
         i = 0
-        while(i < 100 and self.has_time()):
+        while(i < 100):
             # print('The problem does not have an optimal solution in cycle: %d' %(i))
             if(self.block_subpath() is True):
                 self.status = self.solver.Solve()

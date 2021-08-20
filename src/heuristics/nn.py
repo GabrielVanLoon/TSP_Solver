@@ -20,7 +20,6 @@ from math import inf
 """
 
 class NN:
-
     def __init__(self, dist_matrix, tracking=False):
         '''
         Classe construtora a qual comeca inicializando
@@ -88,6 +87,11 @@ class NN:
             min_viz  = -1
 
             if it == (len(self.dist_matrix)-1):
+                
+                # Add two times the node intial, so it will be identified as a self loop in array
+                if self.tracking == True and current_node == node_init:
+                    self.path.append(int(current_node))
+
                 self.path.append(int(current_node))
             else:
                 for viz in range(len(self.dist_matrix)):
@@ -97,6 +101,10 @@ class NN:
                         min_dist = self.dist_matrix[current_node][viz]
                         min_viz  = viz
                 
+                # Add two times the node intial, so it will be identified as a self loop in array
+                if self.tracking == True and current_node == node_init:
+                    self.path.append(int(current_node))
+
                 self.path.append(int(current_node))
 
                 visited[min_viz] = 1
@@ -109,7 +117,6 @@ class NN:
                 iterator += 1 
         
         self.resolve_final_path()
-        # print("Route: ", self.final_path)
         return self.path
     
     
