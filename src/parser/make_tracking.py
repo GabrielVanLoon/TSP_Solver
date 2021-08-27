@@ -35,7 +35,7 @@ def tracking_csv(my_solver, coord_filename, route_filename):
             path_string += ']'
 
             # Write to the file text
-            txt_file.write('-'.join([id_string, path_string, time_string, objective_value_string]))
+            txt_file.write('_'.join([id_string, path_string, time_string, objective_value_string]))
             txt_file.write('\n')
 
 
