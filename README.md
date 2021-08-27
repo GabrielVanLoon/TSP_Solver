@@ -99,6 +99,14 @@ O comando acima lê o arquivo de rotas `data/routes/libra6.csv`, e a partir dest
 
 Lê o arquivo `data/raw/libra6.tsp` e executa todas as actions anteriores (tsp, dist, solve, plot) resolvendo o sistema com o modelo definido pela flag `-s` e gerando SEMPRE uma imagem do ciclo final encontrado.
 
+### Visualização
+```bash=
+./main.py app
+```
+
+Abre o visualizador de algoritmos no broswer.
+O visualizador permite a visualização de cada iteração dos algoritmos e a comparação entre dois algoritmos distintos. 
+
 ## Autores
 [Alberto Campos Neves](https://github.com/AlbertWolf99)
 
@@ -107,5 +115,3 @@ Lê o arquivo `data/raw/libra6.tsp` e executa todas as actions anteriores (tsp, 
 [João Ricardo Minoru Nagasava](https://github.com/JNagasava) 
 
 [Mathias Fernandes Duarte Coelho](https://github.com/Math-O5) 
-
-*Desenvolvido para a disciplina SME0110 - Programação Matemática (2020).*
