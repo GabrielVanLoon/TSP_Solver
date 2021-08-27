@@ -12,6 +12,11 @@ O projeto as possui as seguintes dependências:
 - **matplotlib:** biblioteca utilizada para gerar o plot dos caminhos
 - **optparser:** biblioteca utilitária para gerar o script principal `main.py`
 
+Para usar o módulo de visualização:
+- **Streamlit:** utilizado para gerar o dashboard do usuário;
+- **Pyvis:** utilizado para renderizar o grafo em HTML;
+- **Networkx:** utilizado para gerar e manipular os grafos;
+
 A instalação pode ser feita manualmente utilizando o gerenciador de pacote `pip` ou `conda` ou utilizando o arquivo `requirements.txt` como o exemplo a seguir
 
 ```bash=
