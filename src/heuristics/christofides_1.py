@@ -157,7 +157,8 @@ class Christofides:
             
 
     def format_time(self, time1, time2):
-        return round((time2 - time1), 2)
+        # return round((time2 - time1), 2)
+        return time2 - time1
 
 
     def extract_mst(self, MST,):

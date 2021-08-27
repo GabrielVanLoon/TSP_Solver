@@ -46,8 +46,9 @@ class NN:
         
 
     def format_time(self, time1, time2):
-        return round((time2 - time1), 2)
-
+        # return round((time2 - time1), 2)
+        return time2 - time1
+        
 
     def solve(self, node_init=0):
         '''
