@@ -12,6 +12,11 @@ O projeto as possui as seguintes dependências:
 - **matplotlib:** biblioteca utilizada para gerar o plot dos caminhos
 - **optparser:** biblioteca utilitária para gerar o script principal `main.py`
 
+Para usar o módulo de visualização:
+- **Streamlit:** utilizado para gerar o dashboard do usuário;
+- **Pyvis:** utilizado para renderizar o grafo em HTML;
+- **Networkx:** utilizado para gerar e manipular os grafos;
+
 A instalação pode ser feita manualmente utilizando o gerenciador de pacote `pip` ou `conda` ou utilizando o arquivo `requirements.txt` como o exemplo a seguir
 
 ```bash=
@@ -99,6 +104,14 @@ O comando acima lê o arquivo de rotas `data/routes/libra6.csv`, e a partir dest
 
 Lê o arquivo `data/raw/libra6.tsp` e executa todas as actions anteriores (tsp, dist, solve, plot) resolvendo o sistema com o modelo definido pela flag `-s` e gerando SEMPRE uma imagem do ciclo final encontrado.
 
+### Visualização
+```bash=
+./main.py app
+```
+
+Abre o visualizador de algoritmos no broswer.
+O visualizador permite a visualização de cada iteração dos algoritmos e a comparação entre dois algoritmos distintos. 
+
 ## Autores
 [Alberto Campos Neves](https://github.com/AlbertWolf99)
 
@@ -107,5 +120,3 @@ Lê o arquivo `data/raw/libra6.tsp` e executa todas as actions anteriores (tsp, 
 [João Ricardo Minoru Nagasava](https://github.com/JNagasava) 
 
 [Mathias Fernandes Duarte Coelho](https://github.com/Math-O5) 
-
-*Desenvolvido para a disciplina SME0110 - Programação Matemática (2020).*
